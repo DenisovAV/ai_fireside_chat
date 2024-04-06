@@ -42,6 +42,7 @@ dependencies:
   #google_generative_ai: ^0.2.2
   #firebase_core: ^2.27.1
   #cloud_functions: ^4.6.9
+  #flutter_gemma: ^0.0.2
 
 
 dev_dependencies:
