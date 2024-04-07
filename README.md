@@ -10,7 +10,7 @@ This project is a starting point for a Flutter application.
 - An IDE that supports Flutter (e.g., Android Studio, VS Code) is recommended.
 - A Google account for Firebase and Google Cloud setup.
 
-## Run a Flutter Project Teplate
+## Run a Flutter Project Template
 - Execute the current app using terminal:
      ```
      flutter pub get
@@ -18,62 +18,93 @@ This project is a starting point for a Flutter application.
      ```
 - Alternatively, use your IDE's run button or shortcuts to launch the app.
 
-## Create a New Project in Firebase
-## Enable Vertex API for this project
-- To access the Vertex AI service, you need enable it in the GCP console. The instructions can be found here: https://cloud.google.com/vertex-ai/docs/featurestore/setup.
-## Get the Google Cloud API key and URL
-- Get your apiUrl here: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini
-- Vertex AI uses tokens for authentication. Instead of generating the key in the Google AI Studio, we have to generate the token using the gcloud CLI.
-    1. Install Google Cloud SDK Google Cloud SDK : https://cloud.google.com/sdk/docs/install-sdk
-    2. Log in
-     ```
-     gcloud auth login
-     ```
-    3. Print token
-     ```
-     gcloud auth print-access-token
-     ```
-## Call the Vertex API
+## ChatGPT
+
+**Add the Chat GPT API key**
+ - Follow the link to [OpenAI developer](https://platform.openai.com/api-keys) platform and create new API key
+ - Add this key value to `config/config.json` as **chatGptApiKey**
+**Call the Chat GPT API using REST API**
+ - Remove placeholder code from `chat_gpt_service.dart`
+ - Uncomment REST API call
+
+## Gemini (If you are in Europe and AI Studio is not available for you, skip this step, and follow to Vertex AI step)
+
+**Add the Gemini AI API key**
+- Follow the link to [Google AI Studio](https://aistudio.google.com/app/apikey) platform and create new API key
+- Add this key value to `config/config.json` as **geminiApiKey**
+**Add google_generative_ai dependency**
 - Uncomment google_generative_ai in pubspec.yaml
-- Add apiKey and your apiUrl to config.json
-- Uncomment code in gemini_service.dart
+- Execute `flutter pub get` using terminal
+**Call the Gemini API using plugin**
+- Remove placeholder code from `gemini_service.dart`
+- Uncomment generative AI SDK call
+
+## Gemma locally (for iOS and Android only, if you would like to launch Gemma in Web, follow to Gamma and Vertex AI step)
+
+**Add flutter_gemma dependency**
+- Uncomment google_generative_ai in pubspec.yaml
+- Execute `flutter pub get` using terminal
+**Upload model to device**
+- Follow plugin setup manual to upload Gemma to device
+**Call the Gemma API using plugin**
+- Remove placeholder code from `gemma_service.dart`
+- Uncomment flutter_gemma SDK call
+
+## Execute
+
 - Execute the current app using terminal:
      ```
-     flutter pub get
      flutter run --dart-define-from-file=config/config.json
      ```
+- Alternatively, use your IDE's run button or shortcuts to launch the app with environment parameters from `config/config.json`
 
-## Get the Chat GPT API key
+## Gemini with Vertex AI API
+**Create a New Project in Firebase** (you also can use already existing account)
+- Follow the instruction (Steps 1 and 2) [here](https://firebase.google.com/docs/functions/get-started?gen=2nd#set-up-your-environment-and-the-firebase-cli)
+**Enable Vertex API for this project**
+- To access the Vertex AI service, you need enable it in the GCP console. The instructions can be found [here](https://cloud.google.com/vertex-ai/docs/featurestore/setup)
+**Get the Google Cloud API key and URL**
+- Install [Google Cloud Command Line Interface](https://cloud.google.com/sdk/docs/install-sdk)
+- Log in to Google Cloud using CLI
+    ```
+    gcloud auth login
+    ```
+- Get access token
+    ```
+    gcloud auth print-access-token
+    ```
+- Construct your api Url using template from [here](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
+- Add these token and url values to `config/config.json` as **googleCloudApiUrl** and **googleCloudApiKey**
 
-## Call the Chat GPT API
+**IMPORTANT NOTICE: The token is valid during one hour, then you have to request it again**
 
-## Connect Firebase to your app
-- Install the required command line tools
-   1. If you haven't already, install the Firebase CLI. 
-   2. Log into Firebase using your Google account by running the following command:
-     ```
-     firebase login
-     ```
-  3. Install the FlutterFire CLI by running the following command from any directory:
-     ```
-     dart pub global activate flutterfire_cli
-     ```
-- Configure your apps to use Firebase
-  1. Use the FlutterFire CLI to configure your Flutter apps to connect to Firebase.
-  2. From your Flutter project directory, run the following command to start the app configuration workflow:
-     ```
-     flutterfire configure
-     ```
+**Call the Gemini API using plugin**
+- Remove placeholder code from `gemini_vertex_service.dart`
+- Uncomment generative AI SDK call
+- Replace GeminiService by GeminiVertexService in `service_map.dart`
+
+## Gemini with Vertex AI API and Firebase Cloud Functions (in order not to request new token every hour)
+**Deploy Cloud Functions**
+- Add the application to your Firebase project, the instruction is [here](https://firebase.google.com/docs/flutter/setup)
+- Take a look to code in `functions/src/index.ts`, there is the cloud function
+- Deploy the cloud function to your firebase account, there are instructions
+**Call the Gemini API using Cloud Functions**
+- Remove placeholder code from `gemini_cloud_service.dart`
+- Uncomment cloud function call
+- Replace GeminiService by GeminiCloudService in `service_map.dart`
      
-## Call Gemma from Google CLoud
-- Deploy Gemma to your Cloud from Models Garden: https://console.cloud.google.com/vertex-ai/publishers/google/model-garden
-- Get apiUrl from Endpoints: https://console.cloud.google.com/vertex-ai/online-prediction
-- Add apiUrl to config.json
+## Call Gemma from Google CLoud using REST API
+**Deploy Gemma to your Google Cloud project**
+- Deploy Gemma to your Cloud from [Models Garden](https://console.cloud.google.com/vertex-ai/model-garden)
+**Get deployed Gemma URL**
+- Get apiUrl from [Endpoints](https://console.cloud.google.com/vertex-ai/online-prediction)
+- Add this URL to `config/config.json` as **gemmaCloudApiUrl** and **googleCloudApiKey**
+**Call the Gemma using REST API**
 - Uncomment code in gemma_service.dart
-- Execute the current app using terminal:
-     ```
-     flutter run --dart-define-from-file=config/config.json
-     ```
+- Replace GemmaLocalService by GemmaService in `service_map.dart`
+
+## Call Gemma from Google CLoud using Cloud Functions
+
 
 
 For help getting started with Flutter development, view the

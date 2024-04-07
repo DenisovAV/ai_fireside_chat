@@ -8,16 +8,17 @@ class GeminiService implements ChatService {
   const GeminiService();
 
   static const _apiUrl = String.fromEnvironment('geminiApiUrl');
-  static const _apiKey = String.fromEnvironment('geminiApiKey');
+  static const _apiKey = String.fromEnvironment('googleCloudApiKey');
 
   @override
   Future<String> processMessage(List<Message> messages) async {
     //TODO: Uncomment implementation of Gemini Call
     await Future.delayed(const Duration(seconds: 1));
     return 'Here will be message by Gemini';
-    /*final model = GenerativeModel(
+   /* final model = GenerativeModel(
       model: 'gemini-pro',
       apiKey: _apiKey,
+      httpClient: VertexHttpClient(_apiUrl),
     );
     try {
       final config = GenerationConfig(
@@ -27,14 +28,14 @@ class GeminiService implements ChatService {
       );
       final response = await model.generateContent(mergeContent(messages.reversed.map(getEntry)),
           generationConfig: config);
-      final cleanedResult = (response.text ?? '').replaceAll('*', '').replaceAll('\n', '');
+      final cleanedResult = (response.text ?? '').replaceAll('*', '').replaceAll('\n', '.');
       return cleanedResult;
     } catch (e) {
       throw Exception('Error: $e');
-    }
+    }*/
   }
 
-  Iterable<Content> mergeContent(Iterable<Content> contents) {
+  /*Iterable<Content> mergeContent(Iterable<Content> contents) {
     if (contents.isEmpty || contents.length == 1) {
       return contents;
     }
@@ -57,10 +58,10 @@ class GeminiService implements ChatService {
       merged.add(previousContent);
     }
 
-    return merged;*/
+    return merged;
   }
 
-  /*Content getEntry(Message message) {
+  Content getEntry(Message message) {
     return message.ai == MessageProducer.gemini
         ? Content.model([TextPart(message.text)])
         : Content.multi([TextPart(message.text)]);
