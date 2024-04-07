@@ -1,20 +1,24 @@
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+//import 'package:cloud_functions/cloud_functions.dart';
 
 class GeminiCloudService implements ChatService {
   const GeminiCloudService();
 
   @override
   Future<String> processMessage(List<Message> messages) async {
-    try {
+    await Future.delayed(const Duration(seconds: 1));
+    return 'Here will be message by Gemini';
+   /* try {
       final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'geminiCall',
         options: HttpsCallableOptions(
           timeout: const Duration(seconds: 5),
         ),
       );
+
+      print(mergeContent(messages.map(getEntry)));
 
       final HttpsCallableResult result = await callable.call({
         'contents': [...mergeContent(messages.map(getEntry))],
@@ -64,6 +68,6 @@ class GeminiCloudService implements ChatService {
       merged.add(previousContent);
     }
 
-    return merged;
+    return merged;*/
   }
 }

@@ -8,18 +8,16 @@ import 'package:http/http.dart' as http;
 class ChatGPTService implements ChatService {
   const ChatGPTService();
 
-  static const _apiUrl = String.fromEnvironment('chatGptApiUrl');
   static const _apiKey = String.fromEnvironment('chatGptApiKey');
 
   @override
   @override
   Future<String> processMessage(List<Message> messages) async {
-    //TODO: Uncomment implementation of CHAT GPT Call
     await Future.delayed(const Duration(seconds: 1));
-    return 'Here will be message by Chat GPT';
+    return 'Here will be message by ChatGPT';
     /*try {
       final response = await http.post(
-        Uri.parse(_apiUrl),
+        Uri.parse('https://api.openai.com/v1/chat/completions'),
         headers: {
           'Authorization': 'Bearer $_apiKey',
           'Content-Type': 'application/json',
@@ -35,7 +33,8 @@ class ChatGPTService implements ChatService {
       if (response.statusCode == 200) {
         Map<String, dynamic> data = json.decode(response.body);
         List<int> bytes = latin1.encode(data['choices'][0]['message']['content']);
-        return utf8.decode(bytes);
+        final cleanedResult = (utf8.decode(bytes) ?? '').replaceAll('*', '').replaceAll('\n', '');
+        return cleanedResult;
       } else {
         throw Exception('Failed to process message');
       }

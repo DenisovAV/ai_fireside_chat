@@ -15,7 +15,10 @@ class GemmaService implements ChatService {
     //TODO: Add implementation of Gemma Call
     await Future.delayed(const Duration(seconds: 1));
     return 'Here will be message by Gemma';
-    /*try {
+    /*final prompt = ['.', '?', '!'].contains(messages[0].text[messages[0].text.length - 1])
+        ? messages[0].text
+        : '${messages[0].text}?';
+    try {
       final response = await http.post(
         Uri.parse(_apiUrl),
         headers: {
@@ -25,7 +28,7 @@ class GemmaService implements ChatService {
         body: json.encode({
           'instances': [
             {
-              'prompt': '${messages[0].text}.',
+              'prompt': prompt,
               'max_tokens': 50,
               'temperature': 1,
               'top_p': 1,
@@ -39,9 +42,9 @@ class GemmaService implements ChatService {
         List<int> bytes = latin1.encode(data['predictions'][0]);
         return utf8
             .decode(bytes)
-            .replaceAll('Prompt:\n${messages[0].text}.\nOutput:\n', '')
-            .replaceAll('\n', '.')
-            .replaceAll('*', '.');
+            .replaceAll('Prompt:\n${prompt}\nOutput:\n', '')
+            .replaceAll('\n', '')
+            .replaceAll('*', '');
       } else {
         throw Exception('Failed to process message');
       }
