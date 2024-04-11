@@ -32,8 +32,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatMessagesLoaded(messages));
           _startNewMessage();
         }
-      } catch (e) {
-        emit(ChatMessageError(e.toString(), state.messages));
+      } catch (e, s) {
+        emit(ChatMessageError('$e/n$s', state.messages));
       }
     });
 

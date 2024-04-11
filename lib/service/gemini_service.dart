@@ -1,13 +1,22 @@
+import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
+import 'package:chat/core/message_utils.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:chat/service/vertex_client.dart';
-//import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart';
 
 class GeminiService implements ChatService {
-  const GeminiService();
+  GeminiService({
+    this.client,
+    this.apiKey = _apiKey,
+  });
 
-  static const _apiUrl = String.fromEnvironment('geminiApiUrl');
+  final Client? client;
+  final String apiKey;
+
+  final utils = ContentUtils<Content>();
+
   static const _apiKey = String.fromEnvironment('geminiApiKey');
 
   @override
@@ -17,50 +26,35 @@ class GeminiService implements ChatService {
     return 'Here will be message by Gemini';
     /*final model = GenerativeModel(
       model: 'gemini-pro',
-      apiKey: _apiKey,
+      apiKey: apiKey,
+      httpClient: client,
     );
     try {
       final config = GenerationConfig(
-        maxOutputTokens: 50,
-        stopSequences: ['.', '?', '!'],
-        temperature: 1,
+        maxOutputTokens: maxTokens,
+        stopSequences: stopSequences,
+        temperature: temperature,
       );
-      final response = await model.generateContent(mergeContent(messages.reversed.map(getEntry)),
+      final response = await model.generateContent(
+          utils.mergeContent(
+            contents: messages.reversed.map(getEntry),
+            check: check,
+            create: create,
+          ),
           generationConfig: config);
-      final cleanedResult = (response.text ?? '').replaceAll('*', '').replaceAll('\n', '');
-      return cleanedResult;
+      final answer = response.text ?? '';
+      return answer.prepareAnswer();
     } catch (e) {
       throw Exception('Error: $e');
-    }
+    }*/
   }
 
-  Iterable<Content> mergeContent(Iterable<Content> contents) {
-    if (contents.isEmpty || contents.length == 1) {
-      return contents;
-    }
+  /*bool check(Content previous, Content next) => previous.role == next.role;
 
-    List<Content> merged = [];
-    Content? previousContent;
+  Content create(Content previous, Content next) =>
+      Content.multi([...previous.parts, ...next.parts]);
 
-    for (var content in contents) {
-      if (previousContent != null && previousContent.role == content.role) {
-        previousContent = Content.multi([...previousContent.parts, ...content.parts]);
-      } else {
-        if (previousContent != null) {
-          merged.add(previousContent);
-        }
-        previousContent = content;
-      }
-    }
-
-    if (previousContent != null) {
-      merged.add(previousContent);
-    }
-
-    return merged;*/
-  }
-
-  /*Content getEntry(Message message) {
+  Content getEntry(Message message) {
     return message.ai == MessageProducer.gemini
         ? Content.model([TextPart(message.text)])
         : Content.multi([TextPart(message.text)]);
