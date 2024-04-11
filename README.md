@@ -104,9 +104,12 @@ This project is a starting point for a Flutter application.
 - Uncomment code in gemma_service.dart
 - Replace GemmaLocalService by GemmaService in `service_map.dart`
 
-## Call Gemma from Google CLoud using Cloud Functions
+## Call Gemma with Vertex AI and Firebase Cloud Functions
 
-
+**Call the Gemma model using Cloud Functions**
+- Remove placeholder code from `gemma_cloud_service.dart`
+- Uncomment cloud function call
+- Replace GemmaService by GemmaCloudService in `service_map.dart`
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
