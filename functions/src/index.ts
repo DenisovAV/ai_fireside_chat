@@ -11,7 +11,7 @@ interface Content {
     parts: Part[];
 }
 
-exports.geminiCall = functions.https.onCall(async (request: CallableRequest<{contents: Content[]}> ) => {
+exports.geminiCall = functions.https.onCall(async (request: CallableRequest<{contents: Content[], stopSequences: string[], maxTokens: number, temperature: number}> ) => {
   const vertexai = new VertexAI({project: process.env.GCLOUD_PROJECT ?? "", location: "us-central1"});
 
   const model = "gemini-pro";
@@ -19,9 +19,9 @@ exports.geminiCall = functions.https.onCall(async (request: CallableRequest<{con
   const generativeModel = vertexai.preview.getGenerativeModel({
     model: model,
     generation_config: {
-      "max_output_tokens": 50,
-      "stop_sequences": [".", "?", "!"],
-      "temperature": 1.0,
+      "max_output_tokens": request.data.maxTokens,
+      "stop_sequences": request.data.stopSequences,
+      "temperature": request.data.temperature,
     },
   });
 

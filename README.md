@@ -42,7 +42,7 @@ This project is a starting point for a Flutter application.
 ## Gemma locally (for iOS and Android only, if you would like to launch Gemma in Web, follow to Gamma and Vertex AI step)
 
 **Add flutter_gemma dependency**
-- Uncomment google_generative_ai in pubspec.yaml
+- Uncomment google_generative_ai in `pubspec.yaml`
 - Execute `flutter pub get` using terminal
 **Upload model to device**
 - Follow plugin setup manual to upload Gemma to device
@@ -79,8 +79,6 @@ This project is a starting point for a Flutter application.
 **IMPORTANT NOTICE: The token is valid during one hour, then you have to request it again**
 
 **Call the Gemini API using plugin**
-- Remove placeholder code from `gemini_vertex_service.dart`
-- Uncomment generative AI SDK call
 - Replace GeminiService by GeminiVertexService in `service_map.dart`
 
 ## Gemini with Vertex AI API and Firebase Cloud Functions (in order not to request new token every hour)
@@ -90,7 +88,10 @@ This project is a starting point for a Flutter application.
 - Deploy the cloud function to your firebase account, there are instructions
 **Call the Gemini API using Cloud Functions**
 - Remove placeholder code from `gemini_cloud_service.dart`
+- Uncomment firebase_core and cloud_functions in `pubspec.yaml`
+- Execute `flutter pub get` using terminal
 - Uncomment cloud function call
+- Uncomment Firebase initialization in main()
 - Replace GeminiService by GeminiCloudService in `service_map.dart`
      
 ## Call Gemma from Google CLoud using REST API

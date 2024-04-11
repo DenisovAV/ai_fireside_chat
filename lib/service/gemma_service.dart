@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:chat/core/message.dart';
+import 'package:chat/core/message_const.dart';
+import 'package:chat/core/message_utils.dart';
 import 'package:chat/service/chat_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,9 +17,7 @@ class GemmaService implements ChatService {
     //TODO: Add implementation of Gemma Call
     await Future.delayed(const Duration(seconds: 1));
     return 'Here will be message by Gemma';
-    /*final prompt = ['.', '?', '!'].contains(messages[0].text[messages[0].text.length - 1])
-        ? messages[0].text
-        : '${messages[0].text}?';
+    /*final prompt = messages[0].text.prepareQuestion();
     try {
       final response = await http.post(
         Uri.parse(_apiUrl),
@@ -29,22 +29,15 @@ class GemmaService implements ChatService {
           'instances': [
             {
               'prompt': prompt,
-              'max_tokens': 50,
-              'temperature': 1,
-              'top_p': 1,
-              'top_k': 10,
+              'max_tokens': maxTokens,
+              'temperature': temperature,
             }
           ]
         }),
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> data = json.decode(response.body);
-        List<int> bytes = latin1.encode(data['predictions'][0]);
-        return utf8
-            .decode(bytes)
-            .replaceAll('Prompt:\n${prompt}\nOutput:\n', '')
-            .replaceAll('\n', '')
-            .replaceAll('*', '');
+        final String data = json.decode(response.body)['predictions'][0];
+        return data.latinToUtf().prepareAnswer(prompt: prompt);
       } else {
         throw Exception('Failed to process message');
       }

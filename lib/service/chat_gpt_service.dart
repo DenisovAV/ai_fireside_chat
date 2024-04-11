@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:chat/core/message.dart';
 import 'package:chat/core/message_producer.dart';
+import 'package:chat/core/message_utils.dart';
 import 'package:chat/service/chat_service.dart';
 import 'package:http/http.dart' as http;
+
+import '../core/message_const.dart';
 
 class ChatGPTService implements ChatService {
   const ChatGPTService();
@@ -13,6 +16,7 @@ class ChatGPTService implements ChatService {
   @override
   @override
   Future<String> processMessage(List<Message> messages) async {
+    //TODO: Uncomment implementation of ChatGPT Call
     await Future.delayed(const Duration(seconds: 1));
     return 'Here will be message by ChatGPT';
     /*try {
@@ -24,17 +28,15 @@ class ChatGPTService implements ChatService {
         },
         body: json.encode({
           'model': 'gpt-4-turbo-preview',
-          'max_tokens': 50,
-          'temperature': 1,
-          'stop': ['.', '?', '!'],
+          'max_tokens': maxTokens,
+          'temperature': temperature,
+          'stop': stopSequences,
           'messages': messages.reversed.map((e) => getEntry(e, e == messages.first)).toList(),
         }),
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> data = json.decode(response.body);
-        List<int> bytes = latin1.encode(data['choices'][0]['message']['content']);
-        final cleanedResult = (utf8.decode(bytes) ?? '').replaceAll('*', '').replaceAll('\n', '');
-        return cleanedResult;
+        final String content = json.decode(response.body)['choices'][0]['message']['content'];
+        return content.latinToUtf().prepareAnswer();
       } else {
         throw Exception('Failed to process message');
       }

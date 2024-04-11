@@ -1,16 +1,21 @@
+import 'package:chat/core/message_const.dart';
+import 'package:chat/core/message_utils.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/service/chat_service.dart';
-//import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class GeminiCloudService implements ChatService {
-  const GeminiCloudService();
+  GeminiCloudService();
+
+  final utils = ContentUtils<Map<String, Object>>();
 
   @override
   Future<String> processMessage(List<Message> messages) async {
+    //TODO: Uncomment implementation of Gemini Call
     await Future.delayed(const Duration(seconds: 1));
     return 'Here will be message by Gemini';
-   /* try {
+    /*try {
       final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'geminiCall',
         options: HttpsCallableOptions(
@@ -18,15 +23,24 @@ class GeminiCloudService implements ChatService {
         ),
       );
 
-      print(mergeContent(messages.map(getEntry)));
-
       final HttpsCallableResult result = await callable.call({
-        'contents': [...mergeContent(messages.map(getEntry))],
+        'contents': [
+          ...utils.mergeContent(
+            contents: messages.map(getEntry),
+            check: check,
+            create: create,
+          )
+        ],
+        'stopSequences': stopSequences,
+        'maxTokens': maxTokens,
+        'temperature': temperature,
+        //Add parameters
       });
-      return result.data['result'].replaceAll('*', '').replaceAll('\n', '.');
+      final String answer = result.data['result'];
+      return answer.prepareAnswer();
     } catch (e) {
       throw Exception('Error: $e');
-    }
+    }*/
   }
 
   Map<String, Object> getEntry(Message message) {
@@ -39,35 +53,14 @@ class GeminiCloudService implements ChatService {
     return result;
   }
 
-  Iterable<Map<String, Object>> mergeContent(Iterable<Map<String, Object>> contents) {
-    if (contents.isEmpty || contents.length == 1) {
-      return contents;
-    }
+  bool check(Map<String, Object> previous, Map<String, Object> next) =>
+      previous['role'] == next['role'];
 
-    List<Map<String, Object>> merged = [];
-    Map<String, Object>? previousContent;
-
-    for (var content in contents) {
-      if (previousContent != null && previousContent['role'] == content['role']) {
-        previousContent = {
-          'role': 'user',
-          'parts': [
-            {'text': (previousContent['parts'] as List<Map<String, String?>>)[0]['text']},
-            {'text': (content['parts'] as List<Map<String, String?>>)[0]['text']},
-          ]
-        };
-      } else {
-        if (previousContent != null) {
-          merged.add(previousContent);
-        }
-        previousContent = content;
-      }
-    }
-
-    if (previousContent != null) {
-      merged.add(previousContent);
-    }
-
-    return merged;*/
-  }
+  Map<String, Object> create(Map<String, Object> previous, Map<String, Object> next) => {
+        'role': 'user',
+        'parts': [
+          {'text': (previous['parts'] as List<Map<String, String?>>)[0]['text']},
+          {'text': (next['parts'] as List<Map<String, String?>>)[0]['text']},
+        ]
+      };
 }
