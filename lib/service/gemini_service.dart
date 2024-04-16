@@ -3,7 +3,7 @@ import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/core/message_utils.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+//import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:http/http.dart';
 
 class GeminiService implements ChatService {
@@ -15,7 +15,7 @@ class GeminiService implements ChatService {
   final Client? client;
   final String apiKey;
 
-  final utils = ContentUtils<Content>();
+  //final utils = ContentUtils<Content>();
 
   static const _apiKey = String.fromEnvironment('geminiApiKey');
 

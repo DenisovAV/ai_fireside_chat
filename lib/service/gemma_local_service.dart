@@ -1,10 +1,10 @@
 import 'package:chat/core/message.dart';
 import 'package:chat/core/message_utils.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:flutter_gemma/flutter_gemma_platform_interface.dart';
+//import 'package:flutter_gemma/flutter_gemma_platform_interface.dart';
 
 class GemmaLocalService implements ChatService {
-  final _gemma = Gemma.instance..init(maxTokens: 50);
+  //final _gemma = Gemma.instance..init(maxTokens: 50);
 
   @override
   Future<String> processMessage(List<Message> messages) async {

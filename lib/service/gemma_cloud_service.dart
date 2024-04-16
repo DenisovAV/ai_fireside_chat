@@ -2,7 +2,7 @@ import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_utils.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+//import 'package:cloud_functions/cloud_functions.dart';
 
 class GemmaCloudService implements ChatService {
   GemmaCloudService();

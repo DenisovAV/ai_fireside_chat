@@ -3,7 +3,7 @@ import 'package:chat/core/message_utils.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+//import 'package:cloud_functions/cloud_functions.dart';
 
 class GeminiCloudService implements ChatService {
   GeminiCloudService();
