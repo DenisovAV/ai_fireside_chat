@@ -39,7 +39,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   equatable: ^2.0.3
 
-  #google_generative_ai: ^0.3.0
+  #google_generative_ai: ^0.3.2
   #firebase_core: ^2.27.1
   #cloud_functions: ^4.6.9
   #flutter_gemma: ^0.1.3
