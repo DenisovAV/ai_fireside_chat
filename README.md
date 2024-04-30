@@ -39,12 +39,12 @@ This project is a starting point for a Flutter application.
 - Remove placeholder code from `gemini_service.dart`
 - Uncomment generative AI SDK call
 
-## Gemma locally (for iOS and Android only, if you would like to launch Gemma in Web, follow to Gamma and Vertex AI step)
+## Gemma locally
 
 **Add flutter_gemma dependency**
 - Uncomment google_generative_ai in `pubspec.yaml`
 - Execute `flutter pub get` using terminal
-**Upload model to device**
+**Upload model to device and setup**
 - Follow plugin setup manual to upload Gemma to device
 **Call the Gemma API using plugin**
 - Remove placeholder code from `gemma_service.dart`

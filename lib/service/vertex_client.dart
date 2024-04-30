@@ -12,11 +12,10 @@ class VertexHttpClient extends BaseClient {
         request.url.host != 'generativelanguage.googleapis.com') {
       return _client.send(request);
     }
-
     final vertexRequest = Request(
         request.method,
         Uri.parse(request.url.toString().replaceAll(
-            'https://generativelanguage.googleapis.com/v1/models',
+            'https://generativelanguage.googleapis.com/v1beta/models',
             _projectUrl)))
       ..bodyBytes = request.bodyBytes;
 
