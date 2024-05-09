@@ -36,7 +36,7 @@ class ChatGPTService implements ChatService {
       );
       if (response.statusCode == 200) {
         final String content = json.decode(response.body)['choices'][0]['message']['content'];
-        return content.latinToUtf().prepareAnswer();
+        return content.latinToUtf();
       } else {
         throw Exception('Failed to process message');
       }
