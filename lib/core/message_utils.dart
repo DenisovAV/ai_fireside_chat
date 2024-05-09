@@ -46,4 +46,13 @@ extension StringExtensions on String {
   String latinToUtf() {
     return utf8.decode(latin1.encode(this));
   }
+
+  String truncateOn(List<String> stopSequences) {
+    for (int i = 0; i < length; i++) {
+      if (stopSequences.contains(this[i])) {
+        return substring(0, i);
+      }
+    }
+    return this;
+  }
 }

@@ -31,7 +31,7 @@ class GemmaCloudService implements ChatService {
         'temperature': temperature,
       });
       final String answer = result.data['result'];
-      return answer.prepareAnswer(prompt: prompt);
+      return answer.truncateOn(stopSequences).prepareAnswer(prompt: prompt);
     } catch (e, s) {
       throw Exception('Error: $e $s');
     }*/

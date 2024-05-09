@@ -37,7 +37,7 @@ class GemmaService implements ChatService {
       );
       if (response.statusCode == 200) {
         final String data = json.decode(response.body)['predictions'][0];
-        return data.latinToUtf().prepareAnswer(prompt: prompt);
+        return data.latinToUtf().truncateOn(stopSequences).prepareAnswer(prompt: prompt);
       } else {
         throw Exception('Failed to process message');
       }

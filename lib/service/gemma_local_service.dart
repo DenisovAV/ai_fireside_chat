@@ -14,7 +14,7 @@ class GemmaLocalService implements ChatService {
     /*final prompt = messages[0].text.prepareQuestion();
     if(await _gemma.isInitialized) {
       final response = await _gemma.getResponse(prompt: prompt);
-      final answer = (response ?? '').prepareAnswer();
+      final answer = (response ?? '').truncateOn(stopSequences).prepareAnswer();
       return answer;
     } else {
       return 'Gemma is not initialized yet';
