@@ -42,12 +42,12 @@ This project is a starting point for a Flutter application.
 ## Gemma locally
 
 **Add flutter_gemma dependency**
-- Uncomment google_generative_ai in `pubspec.yaml`
+- Uncomment flutter_gemma in `pubspec.yaml`
 - Execute `flutter pub get` using terminal
 **Upload model to device and setup**
-- Follow plugin setup manual to upload Gemma to device
+- Follow plugin setup manual to upload Gemma to device from [here](https://pub.dev/packages/flutter_gemma)
 **Call the Gemma API using plugin**
-- Remove placeholder code from `gemma_service.dart`
+- Remove placeholder code from `gemma_local_service.dart`
 - Uncomment flutter_gemma SDK call
 
 ## Execute
@@ -101,7 +101,7 @@ This project is a starting point for a Flutter application.
 - Get apiUrl from [Endpoints](https://console.cloud.google.com/vertex-ai/online-prediction)
 - Add this URL to `config/config.json` as **gemmaCloudApiUrl** and **googleCloudApiKey**
 **Call the Gemma using REST API**
-- Uncomment code in gemma_service.dart
+- Uncomment code in `gemma_service.dart`
 - Replace GemmaLocalService by GemmaService in `service_map.dart`
 
 ## Call Gemma with Vertex AI and Firebase Cloud Functions
