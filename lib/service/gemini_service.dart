@@ -43,7 +43,7 @@ class GeminiService implements ChatService {
           ),
           generationConfig: config);
       final answer = response.text ?? '';
-      return answer.prepareAnswer();
+      return answer;
     } catch (e) {
       throw Exception('Error: $e');
     }*/

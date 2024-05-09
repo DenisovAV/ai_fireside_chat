@@ -1,6 +1,7 @@
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatMessageWidget extends StatelessWidget {
   const ChatMessageWidget({super.key, required this.message, required this.alignment});
@@ -30,9 +31,8 @@ class ChatMessageWidget extends StatelessWidget {
             ),
             child: message.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : Text(
-                    message.text,
-                    style: const TextStyle(fontSize: 16.0),
+                : MarkdownBody(
+                    data: message.text,
                   ),
           ),
           const SizedBox(

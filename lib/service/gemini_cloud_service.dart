@@ -37,7 +37,7 @@ class GeminiCloudService implements ChatService {
         //Add parameters
       });
       final String answer = result.data['result'];
-      return answer.prepareAnswer();
+      return answer;
     } catch (e) {
       throw Exception('Error: $e');
     }*/
