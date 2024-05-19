@@ -3,16 +3,19 @@ import 'package:chat/core/message_utils.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:firebase_vertexai/firebase_vertexai.dart';
+//import 'package:firebase_vertexai/firebase_vertexai.dart';
 
 class GeminiFirebaseService implements ChatService {
   GeminiFirebaseService();
 
-  final utils = ContentUtils<Content>();
+  //final utils = ContentUtils<Content>();
 
   @override
   Future<String> processMessage(List<ChatMessage> messages) async {
-    final model = FirebaseVertexAI.instance.generativeModel(
+    //TODO: Uncomment implementation of Gemini Call
+    await Future.delayed(const Duration(seconds: 1));
+    return 'Here will be message by Gemini';
+    /*final model = FirebaseVertexAI.instance.generativeModel(
       model: 'gemini-1.5-pro-preview-0409',
     );
     try {
@@ -32,10 +35,10 @@ class GeminiFirebaseService implements ChatService {
       return answer;
     } catch (e) {
       throw Exception('Error: $e');
-    }
+    }*/
   }
 
-  bool check(Content previous, Content next) => previous.role == next.role;
+  /*bool check(Content previous, Content next) => previous.role == next.role;
 
   Content create(Content previous, Content next) =>
       Content.multi([...previous.parts, ...next.parts]);
@@ -44,5 +47,5 @@ class GeminiFirebaseService implements ChatService {
     return message.ai == MessageProducer.gemini
         ? Content.model([TextPart(message.text)])
         : Content.multi([TextPart(message.text)]);
-  }
+  }*/
 }

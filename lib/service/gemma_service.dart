@@ -14,7 +14,10 @@ class GemmaService implements ChatService {
 
   @override
   Future<String> processMessage(List<ChatMessage> messages) async {
-  final prompt = messages[0].text.prepareQuestion();
+    //TODO: Uncomment implementation of Gemini Call
+    await Future.delayed(const Duration(seconds: 1));
+    return 'Here will be message by Gemma';
+  /*final prompt = messages[0].text.prepareQuestion();
     try {
       final response = await http.post(
         Uri.parse(_apiUrl),
@@ -40,6 +43,6 @@ class GemmaService implements ChatService {
       }
     } catch (e) {
       throw Exception('Error: $e');
-    }
+    }*/
   }
 }

@@ -1,12 +1,11 @@
 import 'dart:convert';
 
 import 'package:chat/core/message.dart';
+import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message_utils.dart';
 import 'package:chat/service/chat_service.dart';
 import 'package:http/http.dart' as http;
-
-import '../core/message_const.dart';
 
 class ChatGPTService implements ChatService {
   const ChatGPTService();
@@ -16,7 +15,11 @@ class ChatGPTService implements ChatService {
   @override
   @override
   Future<String> processMessage(List<ChatMessage> messages) async {
-  try {
+    //TODO: Uncomment implementation of ChatGPT Call
+    await Future.delayed(const Duration(seconds: 1));
+    return 'Here will be message by ChatGPT';
+    /*
+    try {
       final response = await http.post(
         Uri.parse('https://api.openai.com/v1/chat/completions'),
         headers: {
@@ -39,7 +42,7 @@ class ChatGPTService implements ChatService {
       }
     } catch (e) {
       throw Exception('Error: $e');
-    }
+    }*/
   }
 
   Map<String, String> getEntry(ChatMessage message, bool isLast) {
