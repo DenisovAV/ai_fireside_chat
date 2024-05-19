@@ -15,11 +15,8 @@ class ChatGPTService implements ChatService {
 
   @override
   @override
-  Future<String> processMessage(List<Message> messages) async {
-    //TODO: Uncomment implementation of ChatGPT Call
-    await Future.delayed(const Duration(seconds: 1));
-    return 'Here will be message by ChatGPT';
-    /*try {
+  Future<String> processMessage(List<ChatMessage> messages) async {
+  try {
       final response = await http.post(
         Uri.parse('https://api.openai.com/v1/chat/completions'),
         headers: {
@@ -42,10 +39,10 @@ class ChatGPTService implements ChatService {
       }
     } catch (e) {
       throw Exception('Error: $e');
-    }*/
+    }
   }
 
-  Map<String, String> getEntry(Message message, bool isLast) {
+  Map<String, String> getEntry(ChatMessage message, bool isLast) {
     return {
       'role': message.ai == MessageProducer.chatgpt ? 'assistant' : 'user',
       'content': message.text

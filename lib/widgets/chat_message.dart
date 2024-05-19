@@ -6,7 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class ChatMessageWidget extends StatelessWidget {
   const ChatMessageWidget({super.key, required this.message, required this.alignment});
 
-  final Message message;
+  final ChatMessage message;
   final bool alignment;
 
   @override

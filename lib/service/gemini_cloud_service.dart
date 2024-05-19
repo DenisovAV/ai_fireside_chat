@@ -3,7 +3,7 @@ import 'package:chat/core/message_utils.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/service/chat_service.dart';
-//import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class GeminiCloudService implements ChatService {
   GeminiCloudService();
@@ -11,11 +11,8 @@ class GeminiCloudService implements ChatService {
   final utils = ContentUtils<Map<String, Object>>();
 
   @override
-  Future<String> processMessage(List<Message> messages) async {
-    //TODO: Uncomment implementation of Gemini Call
-    await Future.delayed(const Duration(seconds: 1));
-    return 'Here will be message by Gemini';
-    /*try {
+  Future<String> processMessage(List<ChatMessage> messages) async {
+  try {
       final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'geminiCall',
         options: HttpsCallableOptions(
@@ -40,10 +37,10 @@ class GeminiCloudService implements ChatService {
       return answer;
     } catch (e) {
       throw Exception('Error: $e');
-    }*/
+    }
   }
 
-  Map<String, Object> getEntry(Message message) {
+  Map<String, Object> getEntry(ChatMessage message) {
     final result = {
       'role': message.ai == MessageProducer.gemini ? 'model' : 'user',
       'parts': [
