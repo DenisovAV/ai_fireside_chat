@@ -27,7 +27,7 @@ This project is a starting point for a Flutter application.
  - Remove placeholder code from `chat_gpt_service.dart`
  - Uncomment REST API call
 
-## Gemini (If you are in Europe and AI Studio is not available for you, skip this step, and follow to Vertex AI step)
+## Gemini
 
 **Add the Gemini AI API key**
 - Follow the link to [Google AI Studio](https://aistudio.google.com/app/apikey) platform and create new API key
@@ -81,18 +81,28 @@ This project is a starting point for a Flutter application.
 **Call the Gemini API using plugin**
 - Replace GeminiService by GeminiVertexService in `service_map.dart`
 
+## Gemini with Vertex AI Firebase API
+**Connect Firebase project**
+- Add the application to your Firebase project, the instruction is [here](https://firebase.google.com/docs/flutter/setup)
+**Call the Gemini API using Vertex AI Firebase API**
+- Remove placeholder code from `gemini_fireabase_service.dart`
+- Uncomment firebase_core and firebase_vertexai in `pubspec.yaml`
+- Execute `flutter pub get` using terminal
+- Uncomment Firebase initialization in main()
+- Replace GeminiVertexService by GeminiFirebaseService in `service_map.dart`
+**Call the Gemini API using plugin**
+- Replace GeminiService by GeminiVertexService in `service_map.dart`
+
 ## Gemini with Vertex AI API and Firebase Cloud Functions (in order not to request new token every hour)
 **Deploy Cloud Functions**
-- Add the application to your Firebase project, the instruction is [here](https://firebase.google.com/docs/flutter/setup)
 - Take a look to code in `functions/src/index.ts`, there is the cloud function
 - Deploy the cloud function to your firebase account, there are instructions
 **Call the Gemini API using Cloud Functions**
 - Remove placeholder code from `gemini_cloud_service.dart`
-- Uncomment firebase_core and cloud_functions in `pubspec.yaml`
+- Uncomment cloud_functions in `pubspec.yaml`
 - Execute `flutter pub get` using terminal
-- Uncomment cloud function call
 - Uncomment Firebase initialization in main()
-- Replace GeminiService by GeminiCloudService in `service_map.dart`
+- Replace GeminiFirebaseService by GeminiCloudService in `service_map.dart`
      
 ## Call Gemma from Google CLoud using REST API
 **Deploy Gemma to your Google Cloud project**
@@ -103,13 +113,6 @@ This project is a starting point for a Flutter application.
 **Call the Gemma using REST API**
 - Uncomment code in `gemma_service.dart`
 - Replace GemmaLocalService by GemmaService in `service_map.dart`
-
-## Call Gemma with Vertex AI and Firebase Cloud Functions
-
-**Call the Gemma model using Cloud Functions**
-- Remove placeholder code from `gemma_cloud_service.dart`
-- Uncomment cloud function call
-- Replace GemmaService by GemmaCloudService in `service_map.dart`
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,

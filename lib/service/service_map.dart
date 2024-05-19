@@ -9,7 +9,7 @@ import 'package:chat/service/gemma_local_service.dart';
 import 'package:chat/service/gemma_service.dart';
 
 final serviceMap = <MessageProducer, ChatService>{
-  MessageProducer.chatgpt: const ChatGPTService(),
-  MessageProducer.gemini: GeminiService(),
-  MessageProducer.gemma: GemmaLocalService(),
+  MessageProducer.chatgpt: const ChatGPTService(), //ChatGPT
+  MessageProducer.gemini: GeminiService(),  //Gemini, GeminiVertex, GeminiFirebase, GeminiCloud
+  MessageProducer.gemma: GemmaLocalService(), //Gemma, GemmaLocal
 };
