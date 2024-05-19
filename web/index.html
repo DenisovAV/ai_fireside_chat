@@ -36,7 +36,11 @@
     // The value below is injected by flutter build, do not touch.
     const serviceWorkerVersion = null;
   </script>
-  <!-- This script adds the flutter initialization JS code -->
+    <script type="module">
+      import { FilesetResolver, LlmInference } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai';
+      window.FilesetResolver = FilesetResolver;
+      window.LlmInference = LlmInference;
+      </script>
   <script src="flutter.js" defer></script>
 </head>
 <body>

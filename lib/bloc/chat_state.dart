@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 abstract class ChatState extends Equatable {
   const ChatState(this.messages);
 
-  final List<Message> messages;
+  final List<ChatMessage> messages;
 
   @override
   List<Object> get props => [messages];
@@ -31,8 +31,9 @@ class ChatMessageProcessing extends ChatState {
 
 class ChatMessageError extends ChatState {
   final String error;
+  final String stackTrace;
 
-  const ChatMessageError(this.error, super.messages);
+  const ChatMessageError(this.error, this.stackTrace, super.messages);
 
   @override
   List<Object> get props => [error];
