@@ -1,30 +1,19 @@
 import 'package:chat/core/message_const.dart';
+import 'package:chat/core/message_utils.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
-import 'package:chat/core/message_utils.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:http/http.dart';
+import 'package:firebase_vertexai/firebase_vertexai.dart';
 
-class GeminiService implements ChatService {
-  GeminiService({
-    this.client,
-    this.apiKey = _apiKey,
-  });
-
-  final Client? client;
-  final String apiKey;
+class GeminiFirebaseService implements ChatService {
+  GeminiFirebaseService();
 
   final utils = ContentUtils<Content>();
 
-  static const _apiKey = String.fromEnvironment('geminiApiKey');
-
   @override
   Future<String> processMessage(List<ChatMessage> messages) async {
-  final model = GenerativeModel(
-      model: 'gemini-pro',
-      apiKey: apiKey,
-      httpClient: client,
+    final model = FirebaseVertexAI.instance.generativeModel(
+      model: 'gemini-1.5-pro-preview-0409',
     );
     try {
       final config = GenerationConfig(

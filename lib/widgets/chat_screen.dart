@@ -22,6 +22,29 @@ class ChatScreen extends StatelessWidget {
   }
 }
 
+void _showTransparentPopup(BuildContext context, String text, VoidCallback okPress) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Colors.black45,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.black,
+        content: Text(text),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              okPress();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class _ChatMessagesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -55,11 +78,13 @@ class _ChatMessagesList extends StatelessWidget {
         Center(
           child: Image.asset('assets/fireside.gif'),
         ),
-        BlocBuilder<ChatBloc, ChatState>(
-          builder: (context, state) {
+        BlocConsumer<ChatBloc, ChatState>(
+          listener: (context, state) {
             if (state is ChatMessageError) {
-              return Center(child: Text('Error: ${state.error}'));
+              _showTransparentPopup(context, state.error, () => context.read<ChatBloc>().add(const HumanInterrupt()),);
             }
+          },
+          builder: (context, state) {
             final widget = ListView.builder(
               padding: const EdgeInsets.all(8.0),
               reverse: true,

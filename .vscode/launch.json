@@ -16,7 +16,9 @@
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
-        "--dart-define-from-file=config/config.json"
+        "--dart-define-from-file=config/config.json",
+        "-d",
+        "ios"
       ]
     },
     {
