@@ -1,7 +1,4 @@
 {
     "chatGptApiKey": "",
-    "geminiApiKey": "",
-    "gemmaCloudApiUrl": "",
-    "googleCloudApiUrl": "",
-    "googleCloudApiKey": ""
+    "geminiApiKey": ""
 }

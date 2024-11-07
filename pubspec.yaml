@@ -40,11 +40,11 @@ dependencies:
   equatable: ^2.0.3
   flutter_markdown: ^0.7.1
 
-  #google_generative_ai: ^0.4.0
+  #google_generative_ai: ^0.4.6
   #firebase_core: ^2.27.1
   #cloud_functions: ^4.6.9
-  #flutter_gemma: ^0.2.1
-  #firebase_vertexai: ^0.1.0
+  #flutter_gemma: ^0.4.1
+  #firebase_vertexai: ^1.0.2
 
 
 dev_dependencies:

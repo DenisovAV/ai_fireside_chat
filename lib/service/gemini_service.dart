@@ -25,7 +25,7 @@ class GeminiService implements ChatService {
     await Future.delayed(const Duration(seconds: 1));
     return 'Here will be message by Gemini';
   /*final model = GenerativeModel(
-      model: 'gemini-pro',
+      model: 'gemini-1.5-flash-latest',
       apiKey: apiKey,
       httpClient: client,
     );

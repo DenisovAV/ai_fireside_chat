@@ -27,7 +27,7 @@ class ChatGPTService implements ChatService {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'model': 'gpt-4-turbo-preview',
+          'model': 'gpt-4o',
           'max_tokens': maxTokens,
           'temperature': temperature,
           'stop': stopSequences,

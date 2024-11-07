@@ -9,20 +9,16 @@ import 'chat_event.dart';
 import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final Map<MessageProducer, ChatService> _serviceMap;
-
-  ChatBloc(
-    this._serviceMap,
-  ) : super(const ChatInputState([])) {
+  ChatBloc() : super(const ChatInputState([])) {
     on<SendMessage>((event, emit) async {
       final loading = ChatMessage(text: '', ai: event.ai, isLoading: true);
-      final messages = <ChatMessage>[...state.messages]..insert(0, loading);
-      emit(ChatMessageProcessing(messages));
+      final msg = <ChatMessage>[...state.messages]..insert(0, loading);
+      emit(ChatMessageProcessing(msg));
       try {
         final messages = <ChatMessage>[...state.messages]..remove(loading);
         late String response;
         if (event.ai != MessageProducer.human) {
-          response = await _serviceMap[event.ai]?.processMessage(messages) ?? '';
+          response = await event.ai.service?.processMessage(messages) ?? '';
           if (!stopSequences.contains(response.substring(response.length - 1))) {
             response = '$response.';
           }
@@ -61,9 +57,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _startNewMessage() {
-    final list = MessageProducer.values
-        .where((value) => value != state.messages.first.ai && value != MessageProducer.human)
-        .toList();
-    add(SendMessage(list[Random().nextInt(list.length)]));
+    final list = MessageProducer.values.where((value) => (value != state.messages.first.ai) && value != MessageProducer.human).toList();
+    print(list);
+    if (MessageProducer.values.length > 2) {
+      add(SendMessage(list[Random().nextInt(list.length)]));
+    } else {
+      add(SendMessage(list[0]));
+    }
   }
 }
