@@ -16,7 +16,7 @@ class GeminiFirebaseService implements ChatService {
     await Future.delayed(const Duration(seconds: 1));
     return 'Here will be message by Gemini';
     /*final model = FirebaseVertexAI.instance.generativeModel(
-      model: 'gemini-1.5-pro-preview-0409',
+      model: 'gemini-1.5-flash',
     );
     try {
       final config = GenerationConfig(

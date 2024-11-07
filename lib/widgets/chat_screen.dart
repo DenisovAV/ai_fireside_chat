@@ -2,7 +2,6 @@ import 'package:chat/bloc/chat_bloc.dart';
 import 'package:chat/bloc/chat_event.dart';
 import 'package:chat/bloc/chat_state.dart';
 import 'package:chat/core/message_producer.dart';
-import 'package:chat/service/service_map.dart';
 import 'package:chat/widgets/chat_input_field.dart';
 import 'package:chat/widgets/chat_message.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChatBloc(serviceMap),
+      create: (context) => ChatBloc(),
       child: SafeArea(
         child: _ChatMessagesList(),
       ),
@@ -68,10 +67,7 @@ class _ChatMessagesList extends StatelessWidget {
           const SizedBox(
             width: 10,
           ),
-          _floatingButton(
-              context,
-              context.watch<ChatBloc>().state is ChatPauseState ? Icons.play_arrow : Icons.pause,
-              const ChatPause()),
+          _floatingButton(context, context.watch<ChatBloc>().state is ChatPauseState ? Icons.play_arrow : Icons.pause, const ChatPause()),
         ],
       ),
       body: Stack(children: [
@@ -81,7 +77,11 @@ class _ChatMessagesList extends StatelessWidget {
         BlocConsumer<ChatBloc, ChatState>(
           listener: (context, state) {
             if (state is ChatMessageError) {
-              _showTransparentPopup(context, state.error, () => context.read<ChatBloc>().add(const HumanInterrupt()),);
+              _showTransparentPopup(
+                context,
+                state.error,
+                () => context.read<ChatBloc>().add(const HumanInterrupt()),
+              );
             }
           },
           builder: (context, state) {
@@ -103,8 +103,7 @@ class _ChatMessagesList extends StatelessWidget {
                 const Divider(height: 1.0),
                 if (state is ChatInputState)
                   ChatInputField(
-                    handleSubmitted: (text) => BlocProvider.of<ChatBloc>(context)
-                        .add(SendMessage(MessageProducer.human, text: text)),
+                    handleSubmitted: (text) => BlocProvider.of<ChatBloc>(context).add(SendMessage(MessageProducer.human, text: text)),
                   ),
               ],
             );

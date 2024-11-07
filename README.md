@@ -58,29 +58,6 @@ This project is a starting point for a Flutter application.
      ```
 - Alternatively, use your IDE's run button or shortcuts to launch the app with environment parameters from `config/config.json`
 
-## Gemini with Vertex AI API
-**Create a New Project in Firebase** (you also can use already existing account)
-- Follow the instruction (Steps 1 and 2) [here](https://firebase.google.com/docs/functions/get-started?gen=2nd#set-up-your-environment-and-the-firebase-cli)
-**Enable Vertex API for this project**
-- To access the Vertex AI service, you need enable it in the GCP console. The instructions can be found [here](https://cloud.google.com/vertex-ai/docs/featurestore/setup)
-**Get the Google Cloud API key and URL**
-- Install [Google Cloud Command Line Interface](https://cloud.google.com/sdk/docs/install-sdk)
-- Log in to Google Cloud using CLI
-    ```
-    gcloud auth login
-    ```
-- Get access token
-    ```
-    gcloud auth print-access-token
-    ```
-- Construct your api Url using template from [here](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
-- Add these token and url values to `config/config.json` as **googleCloudApiUrl** and **googleCloudApiKey**
-
-**IMPORTANT NOTICE: The token is valid during one hour, then you have to request it again**
-
-**Call the Gemini API using plugin**
-- Replace GeminiService by GeminiVertexService in `service_map.dart`
-
 ## Gemini with Vertex AI Firebase API
 **Connect Firebase project**
 - Add the application to your Firebase project, the instruction is [here](https://firebase.google.com/docs/flutter/setup)
@@ -91,9 +68,13 @@ This project is a starting point for a Flutter application.
 - Uncomment Firebase initialization in main()
 - Replace GeminiVertexService by GeminiFirebaseService in `service_map.dart`
 **Call the Gemini API using plugin**
-- Replace GeminiService by GeminiVertexService in `service_map.dart`
+- Replace GeminiService by GeminiVertexService in `message_producer.dart`
 
-## Gemini with Vertex AI API and Firebase Cloud Functions (in order not to request new token every hour)
+## Gemini with Vertex AI API and Firebase Cloud Functions (as Server Proxy)
+**Create a New Project in Firebase** (you also can use already existing account)
+- Follow the instruction (Steps 1 and 2) [here](https://firebase.google.com/docs/functions/get-started?gen=2nd#set-up-your-environment-and-the-firebase-cli)
+  **Enable Vertex API for this project**
+- To access the Vertex AI service, you need enable it in the GCP console. The instructions can be found [here](https://cloud.google.com/vertex-ai/docs/featurestore/setup)
 **Deploy Cloud Functions**
 - Take a look to code in `functions/src/index.ts`, there is the cloud function
 - Deploy the cloud function to your firebase account, there are instructions
@@ -102,17 +83,7 @@ This project is a starting point for a Flutter application.
 - Uncomment cloud_functions in `pubspec.yaml`
 - Execute `flutter pub get` using terminal
 - Uncomment Firebase initialization in main()
-- Replace GeminiFirebaseService by GeminiCloudService in `service_map.dart`
-     
-## Call Gemma from Google CLoud using REST API
-**Deploy Gemma to your Google Cloud project**
-- Deploy Gemma to your Cloud from [Models Garden](https://console.cloud.google.com/vertex-ai/model-garden)
-**Get deployed Gemma URL**
-- Get apiUrl from [Endpoints](https://console.cloud.google.com/vertex-ai/online-prediction)
-- Add this URL to `config/config.json` as **gemmaCloudApiUrl** and **googleCloudApiKey**
-**Call the Gemma using REST API**
-- Uncomment code in `gemma_service.dart`
-- Replace GemmaLocalService by GemmaService in `service_map.dart`
+- Replace GeminiFirebaseService by GeminiCloudService in `message_producer.dart`
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
