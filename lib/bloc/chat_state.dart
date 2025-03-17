@@ -10,6 +10,10 @@ abstract class ChatState extends Equatable {
   List<Object> get props => [messages];
 }
 
+class ChatLoadingState extends ChatState {
+  const ChatLoadingState(super.messages);
+}
+
 class ChatInputState extends ChatState {
   const ChatInputState(super.messages);
 }

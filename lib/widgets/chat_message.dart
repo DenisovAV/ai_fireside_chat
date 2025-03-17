@@ -49,6 +49,9 @@ class ChatMessageWidget extends StatelessWidget {
       MessageProducer.chatgpt => _circled('assets/chatgpt.png'),
       MessageProducer.gemini => _circled('assets/gemini.png'),
       MessageProducer.gemma => _circled('assets/gemma.png'),
+      MessageProducer.claude => _circled('assets/claude.png'),
+      MessageProducer.firebase => _circled('assets/vertexai.png'),
+      MessageProducer.llama => _circled('assets/llama.png'),
       MessageProducer.human => const Icon(Icons.person),
     };
   }

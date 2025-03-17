@@ -2,16 +2,11 @@ import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:firebase_vertexai/firebase_vertexai.dart';
 
-class GeminiService extends ChatService {
-  GeminiService({
-    this.apiKey = _apiKey,
-  }) : super(MessageProducer.gemini);
+class FirebaseVertexService extends ChatService {
+  FirebaseVertexService() : super(MessageProducer.firebase);
 
-  final String apiKey;
-
-  static const _apiKey = String.fromEnvironment('geminiApiKey');
   GenerativeModel? _inferenceModel;
   ChatSession? _chat;
 
@@ -21,9 +16,8 @@ class GeminiService extends ChatService {
       maxOutputTokens: maxTokens,
       temperature: temperature,
     );
-    _inferenceModel = GenerativeModel(
+    _inferenceModel = FirebaseVertexAI.instance.generativeModel(
       model: 'gemini-2.0-flash',
-      apiKey: apiKey,
       generationConfig: config,
       systemInstruction: Content.system(systemInstruction),
     );
