@@ -25,6 +25,13 @@ class HumanInterrupt extends ChatEvent {
   List<Object> get props => [];
 }
 
+class ChatInit extends ChatEvent {
+  const ChatInit();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ChatPause extends ChatEvent {
   const ChatPause();
 

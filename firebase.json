@@ -1,0 +1,48 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "aichat-c0c27",
+          "appId": "1:781960455917:android:15f4f65f70447749888ee4",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "aichat-c0c27",
+          "appId": "1:781960455917:ios:8fb39badc61ee4a2888ee4",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "aichat-c0c27",
+          "configurations": {
+            "android": "1:781960455917:android:15f4f65f70447749888ee4",
+            "ios": "1:781960455917:ios:8fb39badc61ee4a2888ee4",
+            "web": "1:781960455917:web:242954e5877bd1e1888ee4"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "genkit",
+      "codebase": "genkit",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
+}

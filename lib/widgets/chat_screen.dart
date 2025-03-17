@@ -13,7 +13,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChatBloc(),
+      create: (context) => ChatBloc()..add(const ChatInit()),
       child: SafeArea(
         child: _ChatMessagesList(),
       ),
@@ -85,6 +85,11 @@ class _ChatMessagesList extends StatelessWidget {
             }
           },
           builder: (context, state) {
+            if (state is ChatLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
             final widget = ListView.builder(
               padding: const EdgeInsets.all(8.0),
               reverse: true,
