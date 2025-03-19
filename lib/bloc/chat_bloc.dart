@@ -13,7 +13,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       final loading = ChatMessage(text: '', ai: event.ai, isLoading: true);
       final msg = <ChatMessage>[...state.messages]..insert(0, loading);
       emit(ChatMessageProcessing(msg));
- //     try {
+      try {
         final messages = <ChatMessage>[...state.messages]..remove(loading);
         late String response;
         if (event.ai != MessageProducer.human) {
@@ -28,9 +28,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(ChatMessagesLoaded(messages));
           _startNewMessage();
         }
-  //    } catch (e, s) {
-  //      emit(ChatMessageError(e.toString(), s.toString(), state.messages));
-  //    }
+      } catch (e, s) {
+        emit(ChatMessageError(e.toString(), s.toString(), state.messages));
+      }
     });
 
     on<ChatInit>((event, emit) async {
@@ -55,6 +55,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     });
 
     on<ChatRestart>((event, emit) {
+      for (final ai in MessageProducer.values) {
+        ai.service?.refresh();
+      }
       emit(const ChatInputState([]));
     });
   }
