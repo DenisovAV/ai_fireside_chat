@@ -17,11 +17,11 @@ class GemmaService extends ChatService {
 
   @override
   Future<void> init() async {
-    await _gemma.modelManager.installModelFromAsset('gemma3-1b-it-int4.task');
+    await _gemma.modelManager.installModelFromAsset('model.task');
     _inferenceModel = await _gemma.createModel(
       modelType: ModelType.gemmaIt,
-      preferredBackend: PreferredBackend.gpu,
-      maxTokens: 1024,
+      preferredBackend: PreferredBackend.cpu,
+      maxTokens: 512,
     );
     await initSession();
   }
@@ -32,7 +32,7 @@ class GemmaService extends ChatService {
       randomSeed: 1,
       topK: 1,
       topP: 0.9,
-      tokenBuffer: 256,
+      tokenBuffer: 128,
     );
   }
 

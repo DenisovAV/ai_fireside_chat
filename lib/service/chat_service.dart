@@ -19,10 +19,8 @@ abstract class ChatService {
     final int lastOneIndex = reversedMessages.toList().lastIndexWhere(check);
 
     if (lastOneIndex == -1) {
-      print('Messages after: $reversedMessages');
       return reversedMessages;
     } else {
-      print('Messages after: ${reversedMessages.sublist(lastOneIndex + 1)}');
       return reversedMessages.sublist(lastOneIndex + 1);
     }
   }
