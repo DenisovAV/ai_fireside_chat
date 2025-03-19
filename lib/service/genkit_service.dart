@@ -1,4 +1,4 @@
-import 'package:chat/core/message.dart';
+/*import 'package:chat/core/message.dart';
 import 'package:chat/core/message_const.dart';
 import 'package:chat/service/chat_service.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -50,4 +50,4 @@ class GenkitService extends ChatService {
 
     return result.data['response'];
   }
-}
+}*/

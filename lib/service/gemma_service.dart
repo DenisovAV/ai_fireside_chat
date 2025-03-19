@@ -1,4 +1,4 @@
-import 'package:chat/core/message.dart';
+/*import 'package:chat/core/message.dart';
 import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/service/chat_service.dart';
@@ -48,4 +48,4 @@ class GemmaService extends ChatService {
   Future<void> refresh() async {
     await _chat?.clearHistory();
   }
-}
+}*/
