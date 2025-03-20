@@ -17,8 +17,8 @@ enum MessageProducer {
   human;
 
   static final _chatGPTService = DummyService(ai: MessageProducer.chatgpt);
-  static final _geminiService =  DummyService(ai: MessageProducer.gemini);
-  static final _firebaseService =DummyService(ai: MessageProducer.firebase);
+  static final _geminiService = DummyService(ai: MessageProducer.gemini);
+  static final _firebaseService = DummyService(ai: MessageProducer.firebase);
 
   static final _gemmaService = DummyService(ai: MessageProducer.gemma);
   static final _llamaService = DummyService(ai: MessageProducer.llama);

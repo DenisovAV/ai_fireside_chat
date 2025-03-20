@@ -19,6 +19,7 @@ class DummyService extends ChatService {
 
   @override
   Future<String> processMessage(List<ChatMessage> messages) async {
+    await Future.delayed(Duration(seconds: 1));
     return 'Hhm... I am not sure what you mean';
   }
 }
