@@ -37,7 +37,7 @@ class ChatGPTService extends ChatService {
       }
 
       final body = json.encode({
-        "model": "gpt-4o",
+        "model": "gpt-4.1",
         "messages": chatMessages,
         "temperature": temperature,
         "max_tokens": maxTokens,

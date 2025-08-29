@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

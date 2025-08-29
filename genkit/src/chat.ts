@@ -1,15 +1,14 @@
-// chat.ts
+// chat.ts - model names fixed
 import {SessionStore, SessionData, GenkitBeta} from "genkit/beta";
-import {claude35Haiku} from "genkitx-anthropic";
-import {metaLlama38bInstruct} from "genkitx-github";
+import {metaLlama38bInstruct, mistralSmall} from "genkitx-github";
 import {promises as fs} from "fs";
 import {unlink} from "fs/promises";
 
-type ModelType = "claude" | "llama";
+type ModelType = "deepseek" | "llama";
 
 
 const modelMap: Record<ModelType, any> = {
-  claude: claude35Haiku,
+  deepseek: mistralSmall,
   llama: metaLlama38bInstruct,
 };
 
@@ -41,14 +40,23 @@ export async function createChatSession(
   const store = new JsonSessionStore();
   const session = ai.createSession({store});
 
+  const modelConfig: any = {
+    maxOutputTokens: maxTokens ?? 256,
+    temperature: temperature ?? 0.7,
+    stopSequences: stopSequences ?? [],
+  };
+
+  // Override model names for GitHub Models API compatibility
+  if (modelType === "llama") {
+    modelConfig.version = "Meta-Llama-3.1-8B-Instruct";
+  } else if (modelType === "deepseek") {
+    modelConfig.version = "Mistral-Small";
+  }
+
   session.chat({
     model: modelMap[modelType],
     system: systemInstructions,
-    config: {
-      maxOutputTokens: maxTokens ?? 256,
-      temperature: temperature ?? 0.7,
-      stopSequences: stopSequences ?? [],
-    },
+    config: modelConfig,
   });
 
   return session.id;
@@ -67,22 +75,36 @@ export async function sendMessagesToSession(
   const store = new JsonSessionStore();
   const session = await ai.loadSession(sessionId, {store});
 
+  const modelConfig: any = {
+    maxOutputTokens: maxTokens ?? 256,
+    temperature: temperature ?? 0.7,
+    stopSequences: stopSequences ?? [],
+  };
+
+  // Override model names for GitHub Models API compatibility
+  if (modelType === "llama") {
+    modelConfig.version = "Meta-Llama-3.1-8B-Instruct";
+  } else if (modelType === "deepseek") {
+    modelConfig.version = "Mistral-Small";
+  }
+
   const chatInstance = session.chat({
     model: modelMap[modelType],
     system: systemInstructions,
-    config: {
-      maxOutputTokens: maxTokens ?? 256,
-      temperature: temperature ?? 0.7,
-      stopSequences: stopSequences ?? [],
-    },
+    config: modelConfig,
   });
 
   let responseText = "";
   for (const msg of messages) {
-    const {text} = await chatInstance.send(msg);
+    console.log(`Sending message: ${msg}`);
+    const response = await chatInstance.send(msg);
+    console.log(`Response received:`, response);
+    const text = response.text || "";
+    console.log(`Text extracted: "${text}"`);
     responseText += text + "\n";
   }
 
+  console.log(`Final response: "${responseText.trim()}"`);
   return responseText.trim();
 }
 
