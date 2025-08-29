@@ -1,11 +1,9 @@
 import {genkit, z} from "genkit/beta";
-import {anthropic} from "genkitx-anthropic";
 import {github} from "genkitx-github";
-import {createChatSession, sendMessagesToSession, deleteSession} from "./chat";
+import {createChatSession, sendMessagesToSession, deleteSession} from "./chat.js";
 
 const ai = genkit({
   plugins: [
-    anthropic(),
     github(),
   ],
 });
@@ -14,7 +12,7 @@ export const initChatFlow = ai.defineFlow(
   {
     name: "initChatSession",
     inputSchema: z.object({
-      modelType: z.enum(["claude", "llama"]),
+      modelType: z.enum(["deepseek", "llama"]),
       systemInstructions: z.string().default("You are friendly and helpful."),
       maxTokens: z.number().optional(),
       temperature: z.number().optional(),
@@ -35,7 +33,7 @@ export const sendMessagesFlow = ai.defineFlow(
     name: "sendMessagesToChat",
     inputSchema: z.object({
       sessionId: z.string(),
-      modelType: z.enum(["claude", "llama"]),
+      modelType: z.enum(["deepseek", "llama"]),
       messages: z.array(z.string()),
       systemInstructions: z.string().default("You are friendly and helpful."),
       maxTokens: z.number().optional(),
