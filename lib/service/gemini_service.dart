@@ -11,7 +11,8 @@ class GeminiService extends ChatService {
   ChatSession? _chat;
 
   @override
-  Future<void> init() async {
+  Future<void> init({required String systemInstructions}) async {
+    this.systemInstructions = systemInstructions;
     try {
       print('GeminiService: Starting initialization...');
       final config = GenerationConfig(
@@ -23,7 +24,7 @@ class GeminiService extends ChatService {
       _inferenceModel = FirebaseAI.googleAI().generativeModel(
         model: 'gemini-2.0-flash',
         generationConfig: config,
-        systemInstruction: Content.system(systemInstruction),
+        systemInstruction: Content.system(systemInstructions),
       );
       print('GeminiService: Model created successfully');
       
@@ -38,7 +39,7 @@ class GeminiService extends ChatService {
 
   @override
   Future<void> refresh() async {
-    await init();
+    await init(systemInstructions: systemInstructions);
   }
 
   @override
@@ -55,6 +56,31 @@ class GeminiService extends ChatService {
     } catch (e) {
       print('GeminiService processMessage error: $e');
       print('GeminiService processMessage error type: ${e.runtimeType}');
+      throw Exception('Error: $e');
+    }
+  }
+
+  @override
+  Stream<String> processMessageStream(List<ChatMessage> messages) async* {
+    try {
+      print('GeminiService: Streaming ${messages.length} messages');
+      final chatMessages = Content.multi([...messagesAfter(messages: messages).map((e) => TextPart(e.text))]);
+      print('GeminiService: Sending streaming message to Gemini...');
+      
+      final stream = _chat?.sendMessageStream(chatMessages);
+      if (stream != null) {
+        await for (final response in stream) {
+          final text = response.text;
+          if (text != null && text.isNotEmpty) {
+            print('GeminiService: Streaming chunk length: ${text.length}');
+            yield text;
+          }
+        }
+      }
+      print('GeminiService: Streaming completed');
+    } catch (e) {
+      print('GeminiService processMessageStream error: $e');
+      print('GeminiService processMessageStream error type: ${e.runtimeType}');
       throw Exception('Error: $e');
     }
   }

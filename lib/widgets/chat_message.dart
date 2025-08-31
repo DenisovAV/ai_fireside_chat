@@ -50,6 +50,7 @@ class ChatMessageWidget extends StatelessWidget {
       MessageProducer.gemini => _circled('assets/gemini.png'),
       MessageProducer.deepseek => _circled('assets/deepseek.png'),
       MessageProducer.llama => _circled('assets/llama.png'),
+      MessageProducer.gemma => _circled('assets/gemma.png'),
       MessageProducer.human => const Icon(Icons.person),
     };
   }

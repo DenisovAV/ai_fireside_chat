@@ -37,7 +37,9 @@
       "Bash(npm outdated)",
       "Bash(firebase functions:delete:*)",
       "Bash(npm cache clean:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run serve:*)"
     ],
     "deny": [],
     "ask": []

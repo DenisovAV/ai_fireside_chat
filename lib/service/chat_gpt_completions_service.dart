@@ -18,7 +18,9 @@ class ChatGPTService extends ChatService {
       };
 
   @override
-  Future<void> init() async {}
+  Future<void> init({required String systemInstructions}) async {
+    this.systemInstructions = systemInstructions;
+  }
 
   @override
   Future<void> refresh() async {}
@@ -28,8 +30,8 @@ class ChatGPTService extends ChatService {
     try {
       final chatMessages = <Map<String, String>>[];
 
-      if (systemInstruction.isNotEmpty) {
-        chatMessages.add({"role": "system", "content": systemInstruction});
+      if (systemInstructions.isNotEmpty) {
+        chatMessages.add({"role": "system", "content": systemInstructions});
       }
 
       for (final message in messages.toList()) {
