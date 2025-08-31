@@ -35,6 +35,13 @@ class GemmaService extends ChatService {
       topP: 0.9,
       tokenBuffer: 256,
     );
+    
+    // Add system instructions as initial context
+    if (systemInstructions.isNotEmpty) {
+      await _chat?.addQueryChunk(Message.systemInfo(
+        text: systemInstructions
+      ));
+    }
   }
 
   @override
