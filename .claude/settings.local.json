@@ -39,7 +39,8 @@
       "Bash(npm cache clean:*)",
       "Bash(git add:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npm run serve:*)"
+      "Bash(npm run serve:*)",
+      "Bash(git filter-branch:*)"
     ],
     "deny": [],
     "ask": []
