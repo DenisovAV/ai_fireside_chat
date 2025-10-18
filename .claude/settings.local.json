@@ -41,7 +41,14 @@
       "Bash(npm uninstall:*)",
       "Bash(npm run serve:*)",
       "Bash(git filter-branch:*)",
-      "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --force --tree-filter \"if [ -f config/config.json ]; then sed -i.bak ''s/\"\"sk-[^\"\"]*\"\"/\"\"\"\"/g; s/\"\"AIza[^\"\"]*\"\"/\"\"\"\"/g; s/\"\"sk-ant-[^\"\"]*\"\"/\"\"\"\"/g'' config/config.json && rm -f config/config.json.bak; fi\" -- --all)"
+      "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --force --tree-filter \"if [ -f config/config.json ]; then sed -i.bak ''s/\"\"sk-[^\"\"]*\"\"/\"\"\"\"/g; s/\"\"AIza[^\"\"]*\"\"/\"\"\"\"/g; s/\"\"sk-ant-[^\"\"]*\"\"/\"\"\"\"/g'' config/config.json && rm -f config/config.json.bak; fi\" -- --all)",
+      "Bash(npm --version)",
+      "Bash(cat .gitignore)",
+      "Bash(npm ls --depth=0)",
+      "Read(//Users/sashadenisov/.pub-cache/hosted/pub.dev/flutter_gemma-0.11.5/**)",
+      "Bash(find ~/.pub-cache/hosted/pub.dev/flutter_gemma-0.11.5 -name \"*.dart\" -type f -exec grep -l \"enum ModelFileType\" {} ;)",
+      "Read(//Users/sashadenisov/Work/ai-search-server/src/**)",
+      "Read(//Users/sashadenisov/Work/ai-search-server/**)"
     ],
     "deny": [],
     "ask": []

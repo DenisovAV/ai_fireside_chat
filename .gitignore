@@ -43,4 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Large model files (download separately)
 assets/*.task
+assets/*.bin
+assets/*.tflite
+
+# Config with API keys (use config.json.template)
+config/config.json

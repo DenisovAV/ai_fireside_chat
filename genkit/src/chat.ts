@@ -1,7 +1,6 @@
 // chat.ts - dual AI system for streaming
 import {SessionStore, SessionData} from "genkit/beta";
 import {ai} from "./genkit.config.js";
-// TEMPORARILY DISABLED: import {metaLlama38bInstruct, mistralSmall} from "genkitx-github";
 import {gemini25FlashLite} from "@genkit-ai/googleai";
 import {promises as fs} from "fs";
 import {unlink} from "fs/promises";
