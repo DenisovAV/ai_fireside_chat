@@ -1,16 +1,18 @@
 import {onCallGenkit} from "firebase-functions/v2/https";
 import {defineSecret} from "firebase-functions/params";
-import {initChatFlow, sendMessagesFlow, deleteSessionFlow} from "./flows";
+import {initChatFlow, sendMessagesFlow, deleteSessionFlow} from "./flows.js";
 
-const claudeApiKey = defineSecret("ANTHROPIC_API_KEY");
 const githubToken = defineSecret("GITHUB_TOKEN");
+const googleApiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 
 export const initChatSession = onCallGenkit({
-  secrets: [claudeApiKey, githubToken],
+  secrets: [githubToken, googleApiKey],
 }, initChatFlow);
+
 export const sendMessagesToChat = onCallGenkit({
-  secrets: [claudeApiKey, githubToken],
+  secrets: [githubToken, googleApiKey],
 }, sendMessagesFlow);
-export const deleteSession = onCallGenkit({
-  secrets: [claudeApiKey, githubToken],
+
+export const deleteChatSession = onCallGenkit({
+  secrets: [githubToken, googleApiKey],
 }, deleteSessionFlow);

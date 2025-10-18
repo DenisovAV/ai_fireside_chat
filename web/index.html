@@ -32,10 +32,6 @@
   <title>chat</title>
   <link rel="manifest" href="manifest.json">
 
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = null;
-  </script>
   <script type="module">
     import { FilesetResolver, LlmInference } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai@0.10.22';
     window.FilesetResolver = FilesetResolver;
@@ -43,6 +39,7 @@
   </script>
 </head>
 <body>
+  <!-- Modern Flutter web initialization (3.27+) -->
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

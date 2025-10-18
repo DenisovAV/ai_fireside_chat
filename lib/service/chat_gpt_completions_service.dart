@@ -18,7 +18,9 @@ class ChatGPTService extends ChatService {
       };
 
   @override
-  Future<void> init() async {}
+  Future<void> init({required String systemInstructions}) async {
+    this.systemInstructions = systemInstructions;
+  }
 
   @override
   Future<void> refresh() async {}
@@ -28,8 +30,8 @@ class ChatGPTService extends ChatService {
     try {
       final chatMessages = <Map<String, String>>[];
 
-      if (systemInstruction.isNotEmpty) {
-        chatMessages.add({"role": "system", "content": systemInstruction});
+      if (systemInstructions.isNotEmpty) {
+        chatMessages.add({"role": "system", "content": systemInstructions});
       }
 
       for (final message in messages.toList()) {
@@ -37,7 +39,7 @@ class ChatGPTService extends ChatService {
       }
 
       final body = json.encode({
-        "model": "gpt-4o",
+        "model": "gpt-4.1",
         "messages": chatMessages,
         "temperature": temperature,
         "max_tokens": maxTokens,
@@ -58,6 +60,59 @@ class ChatGPTService extends ChatService {
       }
     } catch (e) {
       throw Exception('Error processing message: $e');
+    }
+  }
+
+  @override
+  Stream<String> processMessageStream(List<ChatMessage> messages) async* {
+    try {
+      final chatMessages = <Map<String, String>>[];
+
+      if (systemInstructions.isNotEmpty) {
+        chatMessages.add({"role": "system", "content": systemInstructions});
+      }
+
+      for (final message in messages.toList()) {
+        chatMessages.add({"role": message.ai == MessageProducer.chatgpt ? "assistant" : "user", "content": message.text});
+      }
+
+      final body = json.encode({
+        "model": "gpt-4.1",
+        "messages": chatMessages,
+        "temperature": temperature,
+        "max_tokens": maxTokens,
+        "stream": true,
+      });
+
+      final request = http.Request('POST', Uri.parse('$_baseUrl/chat/completions'));
+      request.headers.addAll(_headers());
+      request.body = body;
+
+      final streamedResponse = await request.send();
+
+      if (streamedResponse.statusCode == 200) {
+        await for (final chunk in streamedResponse.stream.transform(utf8.decoder)) {
+          final lines = chunk.split('\n');
+          for (final line in lines) {
+            if (line.startsWith('data: ') && !line.contains('[DONE]')) {
+              try {
+                final jsonStr = line.substring(6);
+                final jsonResponse = json.decode(jsonStr);
+                final delta = jsonResponse['choices'][0]['delta'];
+                if (delta['content'] != null) {
+                  yield delta['content'];
+                }
+              } catch (e) {
+                // Skip invalid JSON chunks
+              }
+            }
+          }
+        }
+      } else {
+        throw Exception('OpenAI API streaming error: ${streamedResponse.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error processing stream message: $e');
     }
   }
 }

@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/core/message.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +33,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     on<ChatInit>((event, emit) async {
       await Future.wait([
-        for (final element in MessageProducer.values) element.service?.init() ?? Future.value(),
+        for (final element in MessageProducer.values) _initService(element),
       ]);
       emit(const ChatInputState([]));
     });
@@ -60,6 +58,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
       emit(const ChatInputState([]));
     });
+  }
+
+  Future<void> _initService(MessageProducer producer) async {
+    if (producer.service == null) return;
+    
+    final systemInstructions = switch (producer) {
+      MessageProducer.chatgpt => "You are a serious, intellectual member of a Debate Club. You present well-researched arguments, cite facts, and maintain a formal tone. You always consider multiple perspectives but argue your position with conviction.",
+      MessageProducer.gemini => "You are the witty, humorous member of a Debate Club. You make clever jokes, use puns, and find amusing angles in any topic. Despite your humor, you still make valid points and contribute meaningfully to debates.",
+      MessageProducer.deepseek => "You are the pedantic, detail-oriented member of a Debate Club. You obsess over technicalities, correct minor errors, cite specific sources with dates, and always want to clarify definitions before proceeding with any argument.",
+      MessageProducer.llama => "You are the lovably clueless member of a Debate Club. You often misunderstand topics, ask naive questions, make innocent but silly observations, and sometimes accidentally make profound points through your simplicity.",
+      MessageProducer.gemma => "You are the provocative, argumentative member of a Debate Club. You love to play devil's advocate, challenge popular opinions, and stir up controversy. You're passionate and sometimes combative, but always within the bounds of respectful debate.",
+      _ => "You are a helpful assistant.",
+    };
+    
+    await producer.service!.init(systemInstructions: systemInstructions);
   }
 
   void _startNewMessage() {

@@ -5,10 +5,12 @@ typedef CheckCallback = bool Function(ChatMessage value);
 
 abstract class ChatService {
   final MessageProducer producer;
+  String systemInstructions = "You are a helpful assistant.";
 
-  Future<void> init();
+  Future<void> init({required String systemInstructions});
   Future<void> refresh();
   Future<String> processMessage(List<ChatMessage> messages);
+  Stream<String> processMessageStream(List<ChatMessage> messages);
 
   ChatService(this.producer);
 

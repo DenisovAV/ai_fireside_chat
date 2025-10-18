@@ -21,8 +21,9 @@ class ChatGPTThreadsService extends ChatService {
       };
 
   @override
-  Future<void> init() async {
+  Future<void> init({required String systemInstructions}) async {
     try {
+      this.systemInstructions = systemInstructions;
       _assistantId = await _getOrCreateAssistant();
 
       final response = await http.post(
@@ -42,7 +43,7 @@ class ChatGPTThreadsService extends ChatService {
 
   @override
   Future<void> refresh() async {
-    await init();
+    await init(systemInstructions: systemInstructions);
   }
 
   Future<void> _addMessagesToThread(List<ChatMessage> messages) async {
@@ -121,8 +122,8 @@ class ChatGPTThreadsService extends ChatService {
         headers: _headers(),
         body: json.encode({
           "name": targetName,
-          "model": "gpt-4o-mini",
-          "instructions": systemInstruction,
+          "model": "gpt-4.1-mini",
+          "instructions": systemInstructions,
         }),
       );
 
@@ -175,6 +176,60 @@ class ChatGPTThreadsService extends ChatService {
       return await _getLastAssistantMessage();
     } catch (e) {
       throw Exception('Error processing message: $e');
+    }
+  }
+
+  @override
+  Stream<String> processMessageStream(List<ChatMessage> messages) async* {
+    try {
+      await _addMessagesToThread(messages);
+
+      final body = json.encode({
+        "assistant_id": _assistantId,
+        "temperature": temperature,
+        "max_completion_tokens": maxTokens,
+        "stream": true,
+      });
+
+      final request = http.Request('POST', Uri.parse('$_baseUrl/threads/$_threadId/runs'));
+      request.headers.addAll(_headers());
+      request.body = body;
+
+      final streamedResponse = await request.send();
+
+      if (streamedResponse.statusCode == 200) {
+        await for (final chunk in streamedResponse.stream.transform(utf8.decoder)) {
+          final lines = chunk.split('\n');
+          for (final line in lines) {
+            if (line.startsWith('data: ') && !line.contains('[DONE]')) {
+              try {
+                final jsonStr = line.substring(6);
+                final eventData = json.decode(jsonStr);
+                
+                if (eventData['event'] == 'thread.message.delta') {
+                  final delta = eventData['data']['delta'];
+                  if (delta['content'] != null && delta['content'].isNotEmpty) {
+                    for (final content in delta['content']) {
+                      if (content['type'] == 'text' && content['text'] != null) {
+                        final text = content['text']['value'];
+                        if (text != null && text.isNotEmpty) {
+                          yield text;
+                        }
+                      }
+                    }
+                  }
+                }
+              } catch (e) {
+                // Skip invalid JSON chunks
+              }
+            }
+          }
+        }
+      } else {
+        throw Exception('OpenAI Assistants API streaming error: ${streamedResponse.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error processing stream message: $e');
     }
   }
 }
