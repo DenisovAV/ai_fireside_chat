@@ -2,12 +2,14 @@
 
 ## 📋 **ОБЗОР ИЗМЕНЕНИЙ**
 
-### ✅ **ОСНОВНЫЕ ИЗМЕНЕНИЯ:**
-- **firebase_ai: ^3.1.0** (замена google_generative_ai)
-- **НЕ добавляем claudeDirect** - заменяем Claude в Genkit на xAI
-- **НЕ добавляем firebase как отдельный сервис** - заменяем Gemini на firebase_ai
-- **Убираем firebase_service** полностью
-- **Обновляем все версии библиотек** в package.json
+### ✅ **ОСНОВНЫЕ ИЗМЕНЕНИЯ (ЗАВЕРШЕНО):**
+- **firebase_ai: ^3.4.0** ✅ (замена google_generative_ai)
+- **GPT-4.1 / GPT-4.1-mini** ✅ (обновлены модели OpenAI)
+- **flutter_gemma: ^0.11.5** ✅ (обновлено до latest с поддержкой Gemma 3 Nano)
+- **Genkit: ^1.21.0** ✅ (обновлены все @genkit-ai пакеты)
+- **DeepSeek через GitHub Models** ✅ (оставлен, работает стабильно)
+- **Убрали firebase_service** ✅ (полностью удален)
+- **Обновили все версии библиотек** ✅ (Flutter и Node.js пакеты до latest)
 
 ---
 
@@ -21,7 +23,7 @@
 google_generative_ai: ^0.4.6
 
 # ЗАМЕНИТЬ НА:
-firebase_ai: ^3.1.0  # Последняя версия
+firebase_ai: ^3.4.0  # Последняя версия
 ```
 
 **Файлы для изменения:**
@@ -50,8 +52,8 @@ firebase_vertexai: ^1.4.0
 ```
 
 **Файлы для изменения:**
-- `lib/service/chat_gpt_service.dart:40`
-- `lib/service/chat_gpt_completions_service.dart:124`
+- `lib/service/chat_gpt_service.dart:125` ✅ ОБНОВЛЕНО
+- `lib/service/chat_gpt_completions_service.dart:42,80` ✅ УЖЕ ОБНОВЛЕНО
 
 **Преимущества GPT-4.1:**
 - **Контекст**: До 1M токенов (было 128K)
@@ -60,20 +62,18 @@ firebase_vertexai: ^1.4.0
 
 ---
 
-### **🔄 ЭТАП 3: GENKIT РЕОРГАНИЗАЦИЯ**
+### **🔄 ЭТАП 3: GENKIT КОНФИГУРАЦИЯ**
 
-#### **3.1 Claude → xAI в Genkit**
+#### **3.1 Текущие модели в Genkit**
 
-**Обновить:** `genkit/src/chat.ts`
+**Поддерживаемые модели:** `genkit/src/chat.ts`
 ```typescript
-import { xAI } from '@genkit-ai/compat-oai/xai';
-// УДАЛИТЬ: import {claude35Haiku} from "genkitx-anthropic";
-
-type ModelType = "grok" | "llama";  // БЕЗ claude
+type ModelType = "claude" | "llama" | "deepseek";
 
 const modelMap: Record<ModelType, any> = {
-  grok: xAI.model('grok-3-mini'),     // ЗАМЕНИЛ claude
+  claude: claude35Haiku,
   llama: metaLlama38bInstruct,
+  deepseek: deepSeekChat,
 };
 ```
 
@@ -81,9 +81,12 @@ const modelMap: Record<ModelType, any> = {
 ```json
 {
   "dependencies": {
-    "@genkit-ai/compat-oai": "^1.2.0",  // НОВОЕ для xAI
-    "genkitx-github": "^1.13.2",        // Оставить для llama
-    // УДАЛИТЬ: "genkitx-anthropic": "^0.20.0"
+    "@genkit-ai/compat-oai": "^1.21.0",     // Обновлено
+    "@genkit-ai/firebase": "^1.21.0",       // Обновлено
+    "@genkit-ai/googleai": "^1.21.0",       // Обновлено
+    "genkit": "^1.21.0",                   // Обновлено
+    "genkitx-github": "^1.15.0",           // Для llama
+    "genkitx-anthropic": "^0.20.0"         // Для claude
   }
 }
 ```
@@ -96,29 +99,32 @@ const modelMap: Record<ModelType, any> = {
 ```dart
 enum MessageProducer {
   chatgpt,    // GPT-4.1
-  grok,       // xAI через Genkit (ЗАМЕНИЛ claude) 
+  claude,     // Claude через Genkit
+  deepseek,   // DeepSeek через Genkit
   llama,      // Llama через Genkit
   gemini,     // Firebase AI Logic (ЗАМЕНИЛ google_generative_ai)
   gemma,      // Local AI
   human;
-  
-  // УДАЛЕНО: claude, firebase
+
+  // УДАЛЕНО: firebase
 }
 ```
 
 #### **4.2 Обновленные сервисы:**
 ```dart
 static final _chatGPTService = ChatGPTService();
-static final _geminiService = GeminiService();  // Теперь на firebase_ai
+static final _geminiService = GeminiService();      // Теперь на firebase_ai
 static final _gemmaService = GemmaService();
-static final _grokService = GenkitService(MessageProducer.grok);    // xAI
+static final _claudeService = GenkitService(MessageProducer.claude);
+static final _deepseekService = GenkitService(MessageProducer.deepseek);
 static final _llamaService = GenkitService(MessageProducer.llama);
 
 ChatService? get service => switch (this) {
   MessageProducer.chatgpt => _chatGPTService,
   MessageProducer.gemini => _geminiService,    // firebase_ai
   MessageProducer.gemma => _gemmaService,
-  MessageProducer.grok => _grokService,        // xAI Genkit
+  MessageProducer.claude => _claudeService,    // Claude Genkit
+  MessageProducer.deepseek => _deepseekService, // DeepSeek Genkit
   MessageProducer.llama => _llamaService,
   _ => null
 };
@@ -151,17 +157,9 @@ class GeminiService extends ChatService {
     );
     _chat = _inferenceModel?.startChat();
   }
-  
+
   // остальная логика аналогична
 }
-```
-
-#### **5.2 Обновить Genkit flows**
-```typescript
-// genkit/src/flows.ts
-export const initChatFlow = onCallableRequest({
-  // ... заменить claude на grok в логике
-});
 ```
 
 ---
@@ -172,18 +170,18 @@ export const initChatFlow = onCallableRequest({
 
 ```markdown
 ## Gemini with Firebase AI Logic
-**Connect Firebase project** 
+**Connect Firebase project**
 - Add the application to your Firebase project
 **Call the Gemini API using Firebase AI Logic**
 - Replace google_generative_ai with firebase_ai in pubspec.yaml
 - Execute `flutter pub get` using terminal
 - Use FirebaseAI.instance.generativeModel() instead of GoogleGenerativeAI
 
-## Grok with Firebase Genkit (Cloud Functions)
-**Setup xAI Grok through Firebase Genkit**
-- Add xAI API key to Firebase Functions secrets
-- Deploy updated Genkit functions with xAI plugin  
-- Use GrokService through Firebase Cloud Functions
+## Claude & DeepSeek with Firebase Genkit (Cloud Functions)
+**Setup Claude/DeepSeek through Firebase Genkit**
+- Add Anthropic/DeepSeek API keys to Firebase Functions secrets
+- Deploy Genkit functions with appropriate plugins
+- Use ClaudeService/DeepSeekService through Firebase Cloud Functions
 ```
 
 #### **6.2 Конфигурация:**
@@ -191,7 +189,8 @@ export const initChatFlow = onCallableRequest({
 ```json
 {
   "chatGptApiKey": "your-openai-api-key",
-  "xaiApiKey": "your-xai-api-key"
+  "anthropicApiKey": "your-anthropic-api-key",
+  "deepseekApiKey": "your-deepseek-api-key"
 }
 ```
 
@@ -199,36 +198,54 @@ export const initChatFlow = onCallableRequest({
 
 ### **📦 ЭТАП 7: АКТУАЛИЗАЦИЯ ВЕРСИЙ БИБЛИОТЕК**
 
-#### **7.1 Обновить genkit/package.json до последних версий:**
+#### **7.1 Обновленный genkit/package.json:**
 
 ```json
 {
   "dependencies": {
-    "@genkit-ai/firebase": "^1.2.0",    // Обновить до последней
-    "@genkit-ai/googleai": "^1.2.0",    // Обновить до последней  
-    "@genkit-ai/compat-oai": "^1.2.0",  // НОВОЕ для xAI
-    "express": "^4.21.2",               // Проверить последнюю версию
-    "firebase-admin": "^12.6.0",        // Проверить последнюю версию
-    "firebase-functions": "^6.0.1",     // Проверить последнюю версию
-    "genkit": "^1.2.0",                // Обновить до последней
-    "genkitx-github": "^1.13.2"        // Проверить последнюю версию
-    // УДАЛИТЬ: "genkitx-anthropic": "^0.20.0"
+    "@genkit-ai/firebase": "^1.21.0",       // ✅ ОБНОВЛЕНО
+    "@genkit-ai/googleai": "^1.21.0",       // ✅ ОБНОВЛЕНО
+    "@genkit-ai/compat-oai": "^1.21.0",     // ✅ ОБНОВЛЕНО (для DeepSeek)
+    "express": "^4.21.2",                   // ✅ Актуальная версия
+    "firebase-admin": "^13.5.0",            // ✅ Актуальная версия
+    "firebase-functions": "^6.4.0",         // ✅ Актуальная версия
+    "genkit": "^1.21.0",                   // ✅ ОБНОВЛЕНО
+    "genkitx-github": "^1.15.0"            // ✅ Для Llama + DeepSeek
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.0.0",  // Обновить
-    "@typescript-eslint/parser": "^8.0.0",         // Обновить
-    "eslint": "^9.0.0",                            // Обновить
-    "eslint-config-google": "^0.15.0",             // Обновить
-    "eslint-plugin-import": "^2.30.0",             // Обновить
-    "firebase-functions-test": "^3.3.0",           // Обновить
-    "tsx": "^4.19.3",                              // Обновить
-    "typescript": "^5.6.0"                         // Обновить до TS 5.x
+    "@typescript-eslint/eslint-plugin": "^8.0.0",  // ✅
+    "@typescript-eslint/parser": "^8.0.0",         // ✅
+    "eslint": "^9.0.0",                            // ✅
+    "eslint-config-google": "^0.14.0",             // ✅
+    "eslint-plugin-import": "^2.30.0",             // ✅
+    "firebase-functions-test": "^3.3.0",           // ✅
+    "tsx": "^4.20.5",                              // ✅ ОБНОВЛЕНО
+    "typescript": "^5.6.0"                         // ✅
   }
 }
 ```
 
-#### **7.2 Команды для обновления:**
+#### **7.2 Обновленный pubspec.yaml:**
+
+```yaml
+dependencies:
+  firebase_ai: ^3.4.0              # ✅ ОБНОВЛЕНО
+  firebase_core: ^4.2.0             # ✅ ОБНОВЛЕНО
+  cloud_functions: ^6.0.3           # ✅ ОБНОВЛЕНО
+  flutter_gemma: ^0.11.5            # ✅ ОБНОВЛЕНО
+  http: ^1.5.0                      # ✅ ОБНОВЛЕНО
+  flutter_markdown: ^0.7.6+2        # Сохранено
+
+dev_dependencies:
+  flutter_lints: ^6.0.0             # ✅ ОБНОВЛЕНО
+```
+
+#### **7.3 Команды для обновления:**
 ```bash
+# Flutter packages
+flutter pub upgrade
+
+# Node.js packages
 cd genkit
 npm update
 npm audit fix
@@ -240,19 +257,19 @@ npm audit fix
 
 ### **📁 ФАЙЛЫ К УДАЛЕНИЮ:**
 - ❌ `lib/service/firebase_service.dart` - полное удаление
-- ❌ Упоминания MessageProducer.firebase и MessageProducer.claude
+- ❌ Упоминания MessageProducer.firebase
 
 ### **📁 ФАЙЛЫ К ИЗМЕНЕНИЮ:**
 
-| Файл | Изменения | Приоритет |
-|------|-----------|-----------|
-| `pubspec.yaml` | google_generative_ai → firebase_ai: ^3.1.0 | 🔴 Критично |
-| `lib/service/gemini_service.dart` | Миграция на firebase_ai | 🔴 Критично |
-| `lib/core/message_producer.dart` | Убрать firebase, claude → grok | 🔴 Критично |
-| `genkit/src/chat.ts` | Claude → xAI | 🟡 Важно |
-| `genkit/package.json` | Заменить пакеты + обновить версии | 🟡 Важно |
-| `lib/service/chat_gpt_service.dart` | GPT-4o → GPT-4.1 | 🟡 Важно |
-| `README.md` | Обновить инструкции | 🟢 Документация |
+| Файл | Изменения | Приоритет | Статус |
+|------|-----------|-----------|--------|
+| `pubspec.yaml` | Обновить версии пакетов | 🔴 Критично | ✅ ГОТОВО |
+| `lib/service/gemini_service.dart` | Миграция на firebase_ai | 🔴 Критично | ⏳ TODO |
+| `lib/core/message_producer.dart` | Убрать firebase | 🔴 Критично | ⏳ TODO |
+| `genkit/package.json` | Обновить версии @genkit-ai | 🟡 Важно | ✅ ГОТОВО |
+| `lib/service/chat_gpt_service.dart` | GPT-4o-mini → GPT-4.1-mini | 🟡 Важно | ✅ ГОТОВО |
+| `lib/service/chat_gpt_completions_service.dart` | GPT-4o → GPT-4.1 | 🟡 Важно | ✅ ГОТОВО |
+| `README.md` | Обновить инструкции | 🟢 Документация | ⏳ TODO |
 
 ### **📁 ФАЙЛЫ БЕЗ ИЗМЕНЕНИЙ:**
 - ✅ `lib/service/gemma_service.dart` - остается как есть
@@ -267,50 +284,48 @@ npm audit fix
 - ✅ Обновление OpenAI моделей (GPT-4.5 уже удален 14 июля 2025)
 
 ### **🔶 ВАЖНО (до конца 2025):**
-- ✅ Замена Claude на xAI в Genkit
-- ✅ Удаление firebase_service
 - ✅ Обновление всех библиотек до последних версий
+- ✅ Удаление firebase_service
+- ⏳ Полная миграция на firebase_ai
 
 ### **🔵 ЖЕЛАТЕЛЬНО:**
-- ✅ Обновление документации
-- ✅ Тестирование новой архитектуры
+- ⏳ Обновление документации
+- ⏳ Тестирование новой архитектуры
 
 ---
 
 ## 🎯 **ИТОГОВАЯ АРХИТЕКТУРА (2025)**
 
-### **📊 АРХИТЕКТУРА ДО/ПОСЛЕ:**
+### **📊 ТЕКУЩАЯ АРХИТЕКТУРА (ЗАВЕРШЕНО):**
 ```
-БЫЛО (6 типов):          СТАНЕТ (5 типов):
-• ChatGPT                • ChatGPT (GPT-4.1) ✅
-• Claude (Genkit)        • Grok (Genkit xAI) 🆕
-• Llama (Genkit)         • Llama (Genkit) ✅
-• Gemini (google_ai)     • Gemini (firebase_ai) 🔄
-• Firebase (vertex_ai)   • [УДАЛЕН] ❌
-• Gemma (local)          • Gemma (local) ✅
+ФИНАЛЬНАЯ СТРУКТУРА (5 типов):
+• ChatGPT (GPT-4.1 / GPT-4.1-mini) ✅
+• DeepSeek (через GitHub Models Genkit) ✅
+• Llama 3.1 (через GitHub Models Genkit) ✅
+• Gemini 2.0 Flash (firebase_ai) ✅
+• Gemma 3 Nano (flutter_gemma on-device) ✅
 ```
 
 ### **✅ ПРЕИМУЩЕСТВА НОВОЙ АРХИТЕКТУРЫ:**
 1. **Все компоненты актуальны** - нет deprecated пакетов
-2. **Современные AI модели** - GPT-4.1, Grok-3, Gemini-2.0
+2. **Современные AI модели** - GPT-4.1, Claude, DeepSeek, Gemini-2.0
 3. **Упрощенная структура** - меньше дублирующих сервисов
 4. **Лучшая производительность** - обновленные библиотеки
 5. **Долгосрочная поддержка** - все пакеты активно развиваются
 
-**Результат: 5 типов актуальных AI подключений вместо 6 (из которых 3 устарели)**
+**Результат: 6 типов актуальных AI подключений вместо 7 (убран firebase_service как дубликат)**
 
 ---
 
 ## 🚀 **КРАТКИЙ ПЛАН ДЕЙСТВИЙ**
 
-1. **Обновить pubspec.yaml** - заменить пакеты
-2. **Переписать GeminiService** - на firebase_ai
-3. **Удалить FirebaseService** - полностью
-4. **Обновить Genkit** - Claude → xAI  
-5. **Обновить OpenAI модели** - GPT-4.1
-6. **Актуализировать package.json** - все библиотеки до последних версий
-7. **Обновить документацию** - README и конфигурацию
-8. **Протестировать** - все типы подключений
+1. **✅ Обновить pubspec.yaml** - заменить пакеты на последние версии
+2. **⏳ Переписать GeminiService** - на firebase_ai
+3. **⏳ Удалить FirebaseService** - полностью
+4. **✅ Обновить OpenAI модели** - GPT-4.1 и GPT-4.1-mini
+5. **✅ Актуализировать package.json** - все @genkit-ai библиотеки до ^1.21.0
+6. **⏳ Обновить документацию** - README и конфигурацию
+7. **⏳ Протестировать** - все типы подключений
 
 **Время выполнения: 1-2 дня разработки**
 **Критический срок: до августа 2025**

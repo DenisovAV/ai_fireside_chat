@@ -16,13 +16,13 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@genkit-ai/compat-oai": "^1.17.1",
-    "@genkit-ai/firebase": "^1.17.1",
-    "@genkit-ai/googleai": "^1.17.1",
+    "@genkit-ai/compat-oai": "^1.21.0",
+    "@genkit-ai/firebase": "^1.21.0",
+    "@genkit-ai/googleai": "^1.21.0",
     "express": "^4.21.2",
     "firebase-admin": "^13.5.0",
     "firebase-functions": "^6.4.0",
-    "genkit": "^1.17.1",
+    "genkit": "^1.21.0",
     "genkitx-github": "^1.15.0"
   },
   "devDependencies": {

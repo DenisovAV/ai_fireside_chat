@@ -1,11 +1,8 @@
 import 'package:chat/core/message.dart';
-import 'package:chat/core/message_const.dart';
 import 'package:chat/core/message_producer.dart';
 import 'package:chat/service/chat_service.dart';
-import 'package:flutter_gemma/core/chat.dart';
-import 'package:flutter_gemma/core/model.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_gemma/flutter_gemma.dart';
-import 'package:flutter_gemma/pigeon.g.dart';
 
 class GemmaService extends ChatService {
   GemmaService() : super(MessageProducer.gemma);
@@ -13,16 +10,25 @@ class GemmaService extends ChatService {
   InferenceModel? _inferenceModel;
   InferenceChat? _chat;
 
-  final _gemma = FlutterGemmaPlugin.instance;
-
   @override
   Future<void> init({required String systemInstructions}) async {
     this.systemInstructions = systemInstructions;
-    await _gemma.modelManager.installModelFromAsset('gemma3-1b-it-int4.task');
-    _inferenceModel = await _gemma.createModel(
+
+    // ✅ MODERN API (0.11.5): FlutterGemma.installModel() Fluent API
+    final modelFile = kIsWeb
+      ? 'gemma3-1b-it-int4-web.task'
+      : 'gemma-3n-E2B-it-int4.task';
+
+    await FlutterGemma.installModel(
       modelType: ModelType.gemmaIt,
-      preferredBackend: PreferredBackend.gpu,
+      fileType: ModelFileType.task,
+    )
+      .fromAsset(modelFile)
+      .install();
+
+    _inferenceModel = await FlutterGemma.getActiveModel(
       maxTokens: 1024,
+      preferredBackend: PreferredBackend.gpu, // Web requires GPU
     );
     await initSession();
   }
@@ -47,22 +53,26 @@ class GemmaService extends ChatService {
   @override
   Future<String> processMessage(List<ChatMessage> messages) async {
     for (final m in messagesAfter(messages: messages)) {
-      await _chat?.addQueryChunk(Message(text: m.text, isUser: true));
+      await _chat?.addQuery(Message(text: m.text, isUser: true));
     }
-    return await _chat?.generateChatResponse() ?? '';
+    final response = await _chat?.generateChatResponse();
+    if (response is TextResponse) {
+      return response.token;
+    }
+    return response?.toString() ?? '';
   }
 
   @override
   Stream<String> processMessageStream(List<ChatMessage> messages) async* {
     for (final m in messagesAfter(messages: messages)) {
-      await _chat?.addQueryChunk(Message(text: m.text, isUser: true));
+      await _chat?.addQuery(Message(text: m.text, isUser: true));
     }
-    
+
     final stream = _chat?.generateChatResponseAsync();
     if (stream != null) {
       await for (final response in stream) {
-        if (response is String) {
-          yield response;
+        if (response is TextResponse) {
+          yield response.token;
         }
       }
     }

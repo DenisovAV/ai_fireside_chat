@@ -122,7 +122,7 @@ class ChatGPTThreadsService extends ChatService {
         headers: _headers(),
         body: json.encode({
           "name": targetName,
-          "model": "gpt-4o-mini",
+          "model": "gpt-4.1-mini",
           "instructions": systemInstructions,
         }),
       );

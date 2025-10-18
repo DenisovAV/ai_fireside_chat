@@ -8,9 +8,11 @@ const googleApiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 export const initChatSession = onCallGenkit({
   secrets: [githubToken, googleApiKey],
 }, initChatFlow);
+
 export const sendMessagesToChat = onCallGenkit({
   secrets: [githubToken, googleApiKey],
 }, sendMessagesFlow);
+
 export const deleteChatSession = onCallGenkit({
   secrets: [githubToken, googleApiKey],
 }, deleteSessionFlow);

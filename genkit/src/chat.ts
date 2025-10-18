@@ -1,22 +1,23 @@
 // chat.ts - dual AI system for streaming
-import {SessionStore, SessionData, GenkitBeta} from "genkit/beta";
-import {metaLlama38bInstruct, mistralSmall} from "genkitx-github";
-import {gemini15Flash, gemini15Pro} from "@genkit-ai/googleai";
+import {SessionStore, SessionData} from "genkit/beta";
+import {ai} from "./genkit.config.js";
+// TEMPORARILY DISABLED: import {metaLlama38bInstruct, mistralSmall} from "genkitx-github";
+import {gemini25FlashLite} from "@genkit-ai/googleai";
 import {promises as fs} from "fs";
 import {unlink} from "fs/promises";
 
 type ModelType = "deepseek" | "llama";
 
-// GitHub Models (for regular requests)
-const githubModelMap: Record<ModelType, any> = {
-  deepseek: mistralSmall,
-  llama: metaLlama38bInstruct,
-};
+// GitHub Models (for regular requests) - TEMPORARILY DISABLED
+// const githubModelMap: Record<ModelType, any> = {
+//   deepseek: mistralSmall,
+//   llama: metaLlama38bInstruct,
+// };
 
-// Google AI Models (for streaming)
+// Google AI Models - Using Gemini 2.5 Flash Lite for both
 const googleModelMap: Record<ModelType, any> = {
-  deepseek: gemini15Flash,
-  llama: gemini15Pro,
+  deepseek: gemini25FlashLite,
+  llama: gemini25FlashLite,
 };
 
 export class JsonSessionStore<S = any> implements SessionStore<S> {
@@ -37,7 +38,6 @@ export class JsonSessionStore<S = any> implements SessionStore<S> {
 }
 
 export async function createChatSession(
-  ai: GenkitBeta,
   modelType: ModelType,
   systemInstructions: string,
   maxTokens?: number,
@@ -50,9 +50,8 @@ export async function createChatSession(
     const store = new JsonSessionStore();
     const session = ai.createSession({store});
 
-    // Choose model map based on streaming preference  
-    const modelMap = streaming ? googleModelMap : githubModelMap;
-    const modelRef = modelMap[modelType];
+    // TEMPORARY: Use Google AI models to test if it's a genkitx-github bug
+    const modelRef = googleModelMap[modelType];
 
     const modelConfig: any = {
       maxOutputTokens: maxTokens ?? 256,
@@ -60,14 +59,7 @@ export async function createChatSession(
       stopSequences: stopSequences ?? [],
     };
 
-    // Override model names for GitHub Models API compatibility (only for GitHub models)
-    if (!streaming) {
-      if (modelType === "llama") {
-        modelConfig.version = "Meta-Llama-3.1-8B-Instruct";
-      } else if (modelType === "deepseek") {
-        modelConfig.version = "Mistral-Small";
-      }
-    }
+    // TEMPORARY: Using Gemini 2.5 Flash, no version override needed
 
     console.log(`Model config:`, modelConfig);
     console.log(`Model reference:`, modelRef);
@@ -87,7 +79,6 @@ export async function createChatSession(
 }
 
 export async function sendMessagesToSession(
-  ai: GenkitBeta,
   modelType: ModelType,
   sessionId: string,
   messages: string[],
@@ -103,9 +94,8 @@ export async function sendMessagesToSession(
     const store = new JsonSessionStore();
     const session = await ai.loadSession(sessionId, {store});
 
-    // Choose model map based on streaming preference  
-    const modelMap = streaming ? googleModelMap : githubModelMap;
-    const modelRef = modelMap[modelType];
+    // TEMPORARY: Use Google AI models to test if it's a genkitx-github bug
+    const modelRef = googleModelMap[modelType];
 
     const modelConfig: any = {
       maxOutputTokens: maxTokens ?? 256,
@@ -113,14 +103,7 @@ export async function sendMessagesToSession(
       stopSequences: stopSequences ?? [],
     };
 
-    // Override model names for GitHub Models API compatibility (only for GitHub models)
-    if (!streaming) {
-      if (modelType === "llama") {
-        modelConfig.version = "Meta-Llama-3.1-8B-Instruct";
-      } else if (modelType === "deepseek") {
-        modelConfig.version = "Mistral-Small";
-      }
-    }
+    // TEMPORARY: Using Gemini 2.5 Flash, no version override needed
 
     console.log(`Creating chat instance with model:`, modelRef);
     const chatInstance = session.chat({

@@ -43,7 +43,7 @@ class GenkitService extends ChatService {
     final result = await callable.call({
       'sessionId': sessionId,
       'modelType': producer.name,
-      'systemInstructions': this.systemInstructions,
+      'systemInstructions': systemInstructions,
       'maxTokens':maxTokens,
       'temperature': temperature,
       'messages': messagesAfter(messages: messages).map((m) => m.text).toList(),
@@ -64,7 +64,7 @@ class GenkitService extends ChatService {
       final cloudStream = callable.stream<String, dynamic>({
         'sessionId': sessionId,
         'modelType': producer.name,
-        'systemInstructions': this.systemInstructions,
+        'systemInstructions': systemInstructions,
         'maxTokens': maxTokens,
         'temperature': temperature,
         'streaming': true,

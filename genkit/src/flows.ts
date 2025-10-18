@@ -1,21 +1,8 @@
-import {genkit, z} from "genkit/beta";
-import {github} from "genkitx-github";
-import {googleAI} from "@genkit-ai/googleai";
+import {z} from "genkit/beta";
 import {createChatSession, sendMessagesToSession, deleteSession} from "./chat.js";
+import {ai} from "./genkit.config.js";
 
-const githubAI = genkit({
-  plugins: [
-    github(),
-  ],
-});
-
-const googleAI_instance = genkit({
-  plugins: [
-    googleAI(),
-  ],
-});
-
-export const initChatFlow = githubAI.defineFlow(
+export const initChatFlow = ai.defineFlow(
   {
     name: "initChatSession",
     inputSchema: z.object({
@@ -31,13 +18,12 @@ export const initChatFlow = githubAI.defineFlow(
     }),
   },
   async ({modelType, systemInstructions, maxTokens, temperature, stopSequences, streaming}) => {
-    const aiInstance = streaming ? googleAI_instance : githubAI;
-    const sessionId = await createChatSession(aiInstance, modelType, systemInstructions, maxTokens, temperature, stopSequences, streaming);
+    const sessionId = await createChatSession(modelType, systemInstructions, maxTokens, temperature, stopSequences, streaming);
     return {sessionId};
   }
 );
 
-export const sendMessagesFlow = githubAI.defineFlow(
+export const sendMessagesFlow = ai.defineFlow(
   {
     name: "sendMessagesToChat",
     inputSchema: z.object({
@@ -56,9 +42,8 @@ export const sendMessagesFlow = githubAI.defineFlow(
     streamSchema: z.string(),
   },
   async ({sessionId, modelType, messages, systemInstructions, maxTokens, temperature, stopSequences, streaming}, {sendChunk}) => {
-    const aiInstance = streaming ? googleAI_instance : githubAI;
     const response = await sendMessagesToSession(
-      aiInstance, modelType, sessionId, messages,
+      modelType, sessionId, messages,
       systemInstructions, maxTokens, temperature, stopSequences,
       streaming && sendChunk ? (chunk: string) => { sendChunk(chunk); } : undefined,
       streaming
@@ -68,7 +53,7 @@ export const sendMessagesFlow = githubAI.defineFlow(
 );
 
 
-export const deleteSessionFlow = githubAI.defineFlow(
+export const deleteSessionFlow = ai.defineFlow(
   {
     name: "deleteChatSession",
     inputSchema: z.object({
