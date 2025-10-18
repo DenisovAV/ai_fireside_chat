@@ -9,11 +9,12 @@ class GenkitService extends ChatService {
   GenkitService(super.producer);
 
   @override
-  Future<void> init() async {
+  Future<void> init({required String systemInstructions}) async {
+    this.systemInstructions = systemInstructions;
     final callable = FirebaseFunctions.instance.httpsCallable('initChatSession');
     final result = await callable.call({
       'modelType': producer.name,
-      'systemInstructions': systemInstruction,
+      'systemInstructions': this.systemInstructions,
       'maxTokens':maxTokens,
       'temperature': temperature,
     });
@@ -29,7 +30,7 @@ class GenkitService extends ChatService {
       });
       sessionId = null;
     }
-    await init();
+    await init(systemInstructions: systemInstructions);
   }
 
   @override
@@ -42,12 +43,41 @@ class GenkitService extends ChatService {
     final result = await callable.call({
       'sessionId': sessionId,
       'modelType': producer.name,
-      'systemInstructions': systemInstruction,
+      'systemInstructions': systemInstructions,
       'maxTokens':maxTokens,
       'temperature': temperature,
       'messages': messagesAfter(messages: messages).map((m) => m.text).toList(),
     });
 
     return result.data['response'];
+  }
+
+  @override
+  Stream<String> processMessageStream(List<ChatMessage> messages) async* {
+    if (sessionId == null) {
+      throw Exception('Chat session not initialized');
+    }
+
+    try {
+      final callable = FirebaseFunctions.instance.httpsCallable('sendMessagesToChatStream');
+      
+      final cloudStream = callable.stream<String, dynamic>({
+        'sessionId': sessionId,
+        'modelType': producer.name,
+        'systemInstructions': systemInstructions,
+        'maxTokens': maxTokens,
+        'temperature': temperature,
+        'streaming': true,
+        'messages': messagesAfter(messages: messages).map((m) => m.text).toList(),
+      });
+
+      await for (final response in cloudStream) {
+        if (response is Chunk<String>) {
+          yield response.partialData;
+        }
+      }
+    } catch (e) {
+      throw Exception('GenKit streaming error: $e');
+    }
   }
 }
